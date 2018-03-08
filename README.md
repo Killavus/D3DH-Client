@@ -9,10 +9,6 @@ This is a client (front-end) for the project.
 * Freenect2 (0.2.0)
 * GLFW (3.3.0)
 
-## Optional:
-
-* CUDA Toolkit - I've used 9.1 but I think arbitrary one can be chosen.
-
 ## Compilation:
 
 ```
