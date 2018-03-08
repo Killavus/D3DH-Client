@@ -9,13 +9,15 @@ PROJECT(Client)
 FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(glfw3 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
+FIND_PACKAGE(Boost 1.63.0 REQUIRED thread)
 
 INCLUDE_DIRECTORIES(
 	"${PROJECT_SOURCE_DIR}/include"
 	${freenect2_INCLUDE_DIR}
 	${glfw3_INCLUDE_DIR}
 	${OpenCV_INCLUDE_DIR}
+  ${Boost_INCLUDE_DIRS}
 )
 
-ADD_EXECUTABLE(Client src/Main.cpp)
-TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES})
+ADD_EXECUTABLE(Client src/Camera.cpp src/Main.cpp)
+TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} Boost::thread)
