@@ -19,13 +19,18 @@ int main(int argc, char *argv[]) {
 
   Camera cam(freenect, 0);
   libfreenect2::FrameMap frame_map;
+  libfreenect2::Frame *rgb, *ir, *depth;
 
   while (true) {
-    if (cam.getFrame(frame_map)) {
-      std::cout << "Frame!" << std::endl;
-    } else {
+    if (!cam.getFrame(frame_map)) {
       std::cout << "Failed to get frame." << std::endl;
     }
+
+    rgb = frame_map[libfreenect2::Frame::Color];
+    ir = frame_map[libfreenect2::Frame::Ir];
+    depth = frame_map[libfreenect2::Frame::Depth];
+
+    std::cout << "rgb: " << rgb->timestamp << " | ir: " << ir->timestamp << " | depth: " << depth->timestamp << std::endl;
 
     cam.releaseFrame(frame_map);
   }
