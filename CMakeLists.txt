@@ -46,7 +46,7 @@ INCLUDE_DIRECTORIES(
 )
 
 ADD_EXECUTABLE(Client src/client/Camera.cpp src/client/Main.cpp)
-TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} Boost::thread ${RPCLIB_LIBS})
+TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} ${Boost_LIBRARIES} ${RPCLIB_LIBS})
 
 ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
