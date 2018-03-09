@@ -8,11 +8,30 @@ PROJECT(3DHumanCapture)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
+
 FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(glfw3 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
 FIND_PACKAGE(Boost 1.63.0 REQUIRED thread)
+FIND_PACKAGE(Threads REQUIRED)
+
+# HACK:rpclib because Findrpclib does not set RPCLIB_LIBS
+set(FIND_RPCLIB_PATHS
+    $ENV{RPCLIB_ROOT}
+    ${CMAKE_CURRENT_LIST_DIR}/..                   # To support in-tree build
+    ${CMAKE_CURRENT_LIST_DIR}/../build/output/lib  #
+    ~/Library/Frameworks
+    /Library/Frameworks
+    /usr/local
+    /usr
+    /opt/local
+    /opt)
+
+find_library(RPCLIB_LIBS
+    NAMES librpc rpclib rpc
+    PATHS ${FIND_RPCLIB_PATHS})
+# end of HACK:rpclib
 
 INCLUDE_DIRECTORIES(
         "${PROJECT_SOURCE_DIR}/include"
@@ -33,4 +52,4 @@ ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
     src/server/data_capture.cpp
     src/server/main.cpp)
-TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS})
+TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT})
