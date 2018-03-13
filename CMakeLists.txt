@@ -15,6 +15,7 @@ FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
 FIND_PACKAGE(Boost 1.63.0 REQUIRED thread)
 FIND_PACKAGE(Threads REQUIRED)
+FIND_PACKAGE(yaml-cpp REQUIRED)
 
 # HACK:rpclib because Findrpclib does not set RPCLIB_LIBS
 set(FIND_RPCLIB_PATHS
@@ -43,16 +44,20 @@ INCLUDE_DIRECTORIES(
 	${OpenCV_INCLUDE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${RPCLIB_INCLUDE_DIR}
+        ${YAML_CPP_INCLUDE_DIR}
 )
+
+ADD_LIBRARY(Utils
+    src/common/utils.cpp)
 
 ADD_EXECUTABLE(Client 
     src/client/timeService.cpp
     src/client/Camera.cpp 
     src/client/Main.cpp)
-TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} ${Boost_LIBRARIES} ${RPCLIB_LIBS})
+TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} ${Boost_LIBRARIES} ${RPCLIB_LIBS} ${YAML_CPP_LIBRARIES})
 
 ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
     src/server/data_capture.cpp
     src/server/main.cpp)
-TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${YAML_CPP_LIBRARIES})
