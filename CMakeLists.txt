@@ -54,10 +54,21 @@ ADD_EXECUTABLE(Client
     src/client/timeService.cpp
     src/client/Camera.cpp 
     src/client/Main.cpp)
-TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} ${Boost_LIBRARIES} ${RPCLIB_LIBS} ${YAML_CPP_LIBRARIES})
+TARGET_LINK_LIBRARIES(Client 
+    ${OpenCV_LIBS} 
+    glfw 
+    ${freenect2_LIBRARIES} 
+    ${Boost_LIBRARIES} 
+    ${RPCLIB_LIBS} 
+    ${YAML_CPP_LIBRARIES}
+    "${CMAKE_CURRENT_BINARY_DIR}/Utils.a")
 
 ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
     src/server/data_capture.cpp
     src/server/main.cpp)
-TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${YAML_CPP_LIBRARIES})
+TARGET_LINK_LIBRARIES(Server 
+    ${RPCLIB_LIBS} 
+    ${CMAKE_THREAD_LIBS_INIT} 
+    ${YAML_CPP_LIBRARIES}
+    "${CMAKE_CURRENT_BINARY_DIR}/Utils.a")
