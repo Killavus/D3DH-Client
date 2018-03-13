@@ -2,7 +2,7 @@
 
 #include "type_definitions.h"
 
-void ClientToFramesMapping::initData(std::vector<std::string> kinectsIds)
+void ClientToFramesMapping::initData(std::vector<KinectId> kinectsIds)
 {
     for (const auto &id : kinectsIds)
     {
@@ -11,7 +11,7 @@ void ClientToFramesMapping::initData(std::vector<std::string> kinectsIds)
     }
 }
 
-void ClientToFramesMapping::putFrame(const std::string &kinId, KinectData data)
+void ClientToFramesMapping::putFrame(const KinectId &kinId, KinectData data)
 {
     dataAssert(kinId);
     
@@ -19,7 +19,7 @@ void ClientToFramesMapping::putFrame(const std::string &kinId, KinectData data)
     idToData[kinId].push(std::move(data));
 }
 
-bool ClientToFramesMapping::empty(const std::string &kinId)
+bool ClientToFramesMapping::empty(const KinectId &kinId)
 {
     dataAssert(kinId);
     
@@ -27,7 +27,7 @@ bool ClientToFramesMapping::empty(const std::string &kinId)
     return idToData[kinId].empty();
 }
 
-KinectData& ClientToFramesMapping::peekFirstFrame(const std::string &kinId)
+KinectData& ClientToFramesMapping::peekFirstFrame(const KinectId &kinId)
 {
     dataAssert(kinId);
     
@@ -35,7 +35,7 @@ KinectData& ClientToFramesMapping::peekFirstFrame(const std::string &kinId)
     return idToData[kinId].front();
 }
 
-KinectData ClientToFramesMapping::removeFirstFrame(const std::string &kinId)
+KinectData ClientToFramesMapping::removeFirstFrame(const KinectId &kinId)
 {
     dataAssert(kinId);
     
@@ -45,7 +45,7 @@ KinectData ClientToFramesMapping::removeFirstFrame(const std::string &kinId)
     return res;
 }
 
-void ClientToFramesMapping::dataAssert(const std::string &kinId)
+void ClientToFramesMapping::dataAssert(const KinectId &kinId)
 {
     assert(dataMutex.find(kinId) != dataMutex.end());
     assert(idToData.find(kinId) != idToData.end());

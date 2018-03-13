@@ -1,16 +1,19 @@
 #ifndef TYPE_DEFINITIONS_H
 #define TYPE_DEFINITIONS_H
 
-#include <chrono>
+#include <ctime>
 #include <mutex>
 #include <tuple>
 #include <queue>
 #include <unordered_map>
 #include <vector>
 
-using Endpoint = std::pair<std::string, std::string>;
-using Times = std::vector<std::chrono::steady_clock::time_point>;
+// <ip, port>
+using Endpoint = std::pair<std::string, int>;
+using KinectId = std::string;
 using RawImage = std::vector<unsigned char>;
+using Times = std::vector<time_t>;
+
 
 struct KinectData
 {
@@ -34,18 +37,18 @@ class ClientToFramesMapping
     // initData to be called only once and before any other functions
     
 public:
-    void initData(std::vector<std::string> kinectsIds);
-    void putFrame(const std::string &kinId, KinectData data);
-    bool empty(const std::string &kinId);
-    KinectData& peekFirstFrame(const std::string &kinId);
-    KinectData removeFirstFrame(const std::string &kinId);
+    void initData(std::vector<KinectId> kinectsIds);
+    void putFrame(const KinectId &kinId, KinectData data);
+    bool empty(const KinectId &kinId);
+    KinectData& peekFirstFrame(const KinectId &kinId);
+    KinectData removeFirstFrame(const KinectId &kinId);
     
 private:
-    void dataAssert(const std::string &kinId);
+    void dataAssert(const KinectId &kinId);
     
     using FrameCollection = std::queue<KinectData>;
-    std::unordered_map<std::string, FrameCollection> idToData;
-    std::unordered_map<std::string, std::mutex> dataMutex;
+    std::unordered_map<KinectId, FrameCollection> idToData;
+    std::unordered_map<KinectId, std::mutex> dataMutex;
 };
 
 #endif
