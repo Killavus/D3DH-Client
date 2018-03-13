@@ -31,6 +31,8 @@ Server::Server(int num_clients, uint16_t port,
             {
                 pushHandshakeTimes(kinId, times);
             });
+        
+        srv.async_run();
     }
     
 void Server::performSynchronization()

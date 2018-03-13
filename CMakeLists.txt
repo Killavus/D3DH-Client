@@ -45,7 +45,10 @@ INCLUDE_DIRECTORIES(
         ${RPCLIB_INCLUDE_DIR}
 )
 
-ADD_EXECUTABLE(Client src/client/Camera.cpp src/client/Main.cpp)
+ADD_EXECUTABLE(Client 
+    src/client/timeService.cpp
+    src/client/Camera.cpp 
+    src/client/Main.cpp)
 TARGET_LINK_LIBRARIES(Client ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES} ${Boost_LIBRARIES} ${RPCLIB_LIBS})
 
 ADD_EXECUTABLE(Server
