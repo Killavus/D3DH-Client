@@ -1,4 +1,7 @@
+#include <rpc/server.h>
+
 #include "data_capture.h"
+#include "type_definitions.h"
 
 Server::Server(int num_clients, uint16_t port, 
     std::vector<Endpoint> clientsEndpoints,
@@ -7,7 +10,16 @@ Server::Server(int num_clients, uint16_t port,
     , num_clients_registered(0)
     , clientToFrames(clientToFrames)
     , clientsEndpoints(std::move(clientsEndpoints)) 
-    {       
+    {
+        rpc::server srv(port);
+        srv.bind("pushKinectData", 
+            [this](std::string kinId, RawImage rgb, RawImage depth, 
+                   RawImage ir, size_t width, time_t timestamp)
+            {
+                pushKinectData(kinId, 
+                    KinectData(std::move(rgb), std::move(depth), std::move(ir), 
+                        width, ir.size() / width, timestamp));
+            });
     }
     
 void Server::performSynchronization()

@@ -50,3 +50,11 @@ void ClientToFramesMapping::dataAssert(const std::string &kinId)
     assert(dataMutex.find(kinId) != dataMutex.end());
     assert(idToData.find(kinId) != idToData.end());
 }
+
+KinectData::KinectData(RawImage &&rgb, RawImage &&depth, RawImage &&ir, int width, 
+    int height, time_t time)
+    : rgb(std::move(rgb)), depth(std::move(depth)), ir(std::move(ir))
+    , width(width), height(height), timestamp(time)
+{
+}
+

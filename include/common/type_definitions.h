@@ -10,10 +10,21 @@
 
 using Endpoint = std::pair<std::string, std::string>;
 using Times = std::vector<std::chrono::steady_clock::time_point>;
+using RawImage = std::vector<unsigned char>;
 
 struct KinectData
 {
+    KinectData(RawImage &&rgb, RawImage &&depth, RawImage &&ir, int width, 
+               int height, time_t time);
     
+    RawImage rgb;
+    RawImage depth;
+    RawImage ir;
+    
+    int width;
+    int height;
+    
+    time_t timestamp;
 };
 
 class ClientToFramesMapping
