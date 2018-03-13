@@ -49,6 +49,8 @@ INCLUDE_DIRECTORIES(
 
 ADD_LIBRARY(Utils
     src/common/utils.cpp)
+TARGET_LINK_LIBRARIES(Utils
+    ${YAML_CPP_LIBRARIES})
 
 ADD_EXECUTABLE(Client 
     src/client/timeService.cpp
@@ -60,8 +62,8 @@ TARGET_LINK_LIBRARIES(Client
     ${freenect2_LIBRARIES} 
     ${Boost_LIBRARIES} 
     ${RPCLIB_LIBS} 
-    ${YAML_CPP_LIBRARIES}
-    "${CMAKE_CURRENT_BINARY_DIR}/Utils.a")
+    Utils)
+ADD_DEPENDENCIES(Client Utils)
 
 ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
@@ -70,5 +72,5 @@ ADD_EXECUTABLE(Server
 TARGET_LINK_LIBRARIES(Server 
     ${RPCLIB_LIBS} 
     ${CMAKE_THREAD_LIBS_INIT} 
-    ${YAML_CPP_LIBRARIES}
-    "${CMAKE_CURRENT_BINARY_DIR}/Utils.a")
+    Utils)
+ADD_DEPENDENCIES(Server Utils)
