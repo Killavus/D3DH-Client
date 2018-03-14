@@ -6,7 +6,10 @@
 #include <tuple>
 #include <queue>
 #include <unordered_map>
+#include <map>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 // <ip, port>
 using Endpoint = std::pair<std::string, uint16_t>;
@@ -52,5 +55,27 @@ private:
     std::unordered_map<KinectId, FrameCollection> idToData;
     std::unordered_map<KinectId, std::mutex> dataMutex;
 };
+
+using PackOfFrames = std::unordered_map<KinectId, KinectData>;
+
+class PackOfFramesHandler {
+public:
+    PackOfFramesHandler(std::uint64_t epsilon);
+
+    void putFrame(const KinectId& kinectId, KinectData&& data);
+    boost::optional<PackOfFrames> getNextPackOfFrames();
+
+private:
+    std::uint64_t getFrameId(std::uint64_t frameID);
+
+    std::mutex packagesMutex;
+    std::mutex readyPackOfFramesMutex;
+
+    std::map<std::uint64_t, PackOfFrames> packages;
+    std::queue<PackOfFrames> readyPackOfFrames;
+    std::uint64_t maxDistBetweenFramesInBatch;
+};
+
+
 
 #endif

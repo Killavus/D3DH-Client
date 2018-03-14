@@ -14,14 +14,14 @@ class Server
 public:
     Server(uint16_t port, 
            std::unordered_map<KinectId, Endpoint> clientsEndpoints,
-           ClientToFramesMapping &clientToFrames);
+           PackOfFramesHandler &frameSynchronizer);
     void performSynchronization();
     
 private:
     // to be exposed via rpc
     void pushKinectData(KinectId kinId, KinectData data);
 
-    ClientToFramesMapping &clientToFrames;
+    PackOfFramesHandler &frameSynchronizer;
     std::unordered_map<KinectId, Endpoint> clientsEndpoints;
     std::unordered_map<KinectId, time_t> localtimeOffsets;
 };

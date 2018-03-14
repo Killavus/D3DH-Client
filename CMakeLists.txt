@@ -62,7 +62,8 @@ TARGET_LINK_LIBRARIES(Client
     ${freenect2_LIBRARIES} 
     ${Boost_LIBRARIES} 
     ${RPCLIB_LIBS} 
-    Utils)
+    Utils
+    ${CMAKE_THREAD_LIBS_INIT})
 ADD_DEPENDENCIES(Client Utils)
 
 ADD_EXECUTABLE(Server
