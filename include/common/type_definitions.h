@@ -9,24 +9,26 @@
 #include <vector>
 
 // <ip, port>
-using Endpoint = std::pair<std::string, int>;
+using Endpoint = std::pair<std::string, uint16_t>;
 using KinectId = std::string;
 using RawImage = std::vector<unsigned char>;
 using Times = std::vector<time_t>;
 
+struct Image
+{
+    Image(RawImage img, int w, int h);
+    Image(RawImage img, int w);
+    
+    RawImage img;
+    int width, height;
+};
 
 struct KinectData
 {
-    KinectData(RawImage &&rgb, RawImage &&depth, RawImage &&ir, int width, 
-               int height, time_t time);
+    KinectData(RawImage rgb, size_t rgbW, RawImage depth, size_t depthW,
+        RawImage ir, size_t irW, time_t time);
     
-    RawImage rgb;
-    RawImage depth;
-    RawImage ir;
-    
-    int width;
-    int height;
-    
+    Image rgb, depth, ir;
     time_t timestamp;
 };
 

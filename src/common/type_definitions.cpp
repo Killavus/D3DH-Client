@@ -51,10 +51,22 @@ void ClientToFramesMapping::dataAssert(const KinectId &kinId)
     assert(idToData.find(kinId) != idToData.end());
 }
 
-KinectData::KinectData(RawImage &&rgb, RawImage &&depth, RawImage &&ir, int width, 
-    int height, time_t time)
-    : rgb(std::move(rgb)), depth(std::move(depth)), ir(std::move(ir))
-    , width(width), height(height), timestamp(time)
+KinectData::KinectData(RawImage rgb, size_t rgbW, RawImage depth, size_t depthW,
+    RawImage ir, size_t irW, time_t time)
+    : rgb(std::move(rgb), rgbW)
+    , depth(std::move(depth), depthW)
+    , ir(std::move(ir), irW)
+    , timestamp(time)
 {
 }
 
+Image::Image(RawImage img, int w, int h) 
+    : img(std::move(img)), width(w), height(h)
+{
+}
+
+Image::Image(RawImage img, int w)
+    : img(std::move(img)), width(w)
+{
+    height = this->img.size() / w;
+}

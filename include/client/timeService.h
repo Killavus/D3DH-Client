@@ -4,7 +4,7 @@
 class TimeService
 {
 public:
-    TimeService(int port);
+    TimeService(uint16_t port);
     bool isSynchronized();
 
 private:

@@ -2,7 +2,7 @@
 
 #include "timeService.h"
 
-TimeService::TimeService(int port)
+TimeService::TimeService(uint16_t port)
     : synchronized(false)
 {
     rpc::server srv(port);

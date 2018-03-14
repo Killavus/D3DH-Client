@@ -7,31 +7,25 @@
 #include "data_capture.h"
 #include "type_definitions.h"
 
-Server::Server(int num_clients, uint16_t port, 
+Server::Server(uint16_t port, 
     std::unordered_map<KinectId, Endpoint> clientsEndpoints,
     ClientToFramesMapping &clientToFrames)
-    : num_clients(num_clients)
-    , num_clients_registered(0)
-    , clientToFrames(clientToFrames)
+    : clientToFrames(clientToFrames)
     , clientsEndpoints(std::move(clientsEndpoints)) 
     {
         rpc::server srv(port);
         
         srv.bind("pushKinectData", 
-            [this](KinectId kinId, RawImage rgb, RawImage depth, 
-                   RawImage ir, size_t width, time_t timestamp)
+            [this](KinectId kinId, RawImage rgb, size_t rgbW, 
+                   RawImage depth, size_t depthW,
+                   RawImage ir, size_t irW, time_t timestamp)
             {
                 pushKinectData(kinId, 
-                    KinectData(std::move(rgb), std::move(depth), std::move(ir), 
-                        width, ir.size() / width, timestamp));
+                    KinectData(std::move(rgb), rgbW,
+                        std::move(depth), depthW,
+                        std::move(ir), irW, timestamp));
             });
-        
-        srv.bind("pushHandshakeTimes",
-            [this](KinectId kinId, Times times)
-            {
-                pushHandshakeTimes(kinId, times);
-            });
-        
+
         srv.async_run();
     }
     
@@ -54,19 +48,17 @@ void Server::performSynchronization()
 
         localtimeOffsets[kinId] = timeOffset;
     }
-}
-
-bool Server::synchronizationFinished()
-{
-    return num_clients_registered == num_clients;
+    
+    for (const auto &entry : clientsEndpoints)
+    {
+        const auto &kinId = entry.first;
+        const auto &endpoint = entry.second;
+        rpc::client client(endpoint.first, endpoint.second);
+        client.call("syncFinished");
+    }
 }
 
 void Server::pushKinectData(KinectId kinId, KinectData data)
 {
     clientToFrames.putFrame(kinId, std::move(data));
-}
-
-void Server::pushHandshakeTimes(KinectId kinId, Times times)
-{
-    // to be implemented
 }

@@ -2,10 +2,12 @@
 #define UTILS_H
 
 #include <string>
+#include <vector>
 
 #include "type_definitions.h"
 
-std::string getHostName();
+std::string getHostname();
+std::vector<unsigned char> copyToVector(unsigned char *img, size_t size);
 
 struct Config
 {
