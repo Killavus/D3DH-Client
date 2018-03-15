@@ -20,10 +20,11 @@ Server::Server(uint16_t port,
                    RawImage depth, size_t depthW,
                    RawImage ir, size_t irW, time_t timestamp)
             {
+                auto timeOffset = localtimeOffsets[kinId];
                 pushKinectData(kinId, 
                     KinectData(std::move(rgb), rgbW,
                         std::move(depth), depthW,
-                        std::move(ir), irW, timestamp));
+                        std::move(ir), irW, timestamp + timeOffset));
             });
 
         srv.async_run();
