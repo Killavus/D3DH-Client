@@ -15,6 +15,7 @@ struct Config
 
     std::unordered_map<KinectId, Endpoint> clientsEndpoints;
     Endpoint serverEndpoint;
+    std::uint64_t maxDistBetweenFramesInBatch;
 };
 
 #endif // UTILS_H

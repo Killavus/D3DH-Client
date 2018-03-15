@@ -9,8 +9,8 @@
 
 Server::Server(uint16_t port, 
     std::unordered_map<KinectId, Endpoint> clientsEndpoints,
-    ClientToFramesMapping &clientToFrames)
-    : clientToFrames(clientToFrames)
+    PackOfFramesHandler &frameSynchronizer)
+    : frameSynchronizer(frameSynchronizer)
     , clientsEndpoints(std::move(clientsEndpoints)) 
     {
         rpc::server srv(port);
@@ -61,5 +61,5 @@ void Server::performSynchronization()
 
 void Server::pushKinectData(KinectId kinId, KinectData data)
 {
-    clientToFrames.putFrame(kinId, std::move(data));
+    frameSynchronizer.putFrame(kinId, std::move(data));
 }

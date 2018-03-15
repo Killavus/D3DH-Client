@@ -38,4 +38,6 @@ Config::Config(std::string path)
     auto ip = config["Server"]["Ip"].as<std::string>();
     auto port = config["Server"]["Port"].as<uint16_t>();
     serverEndpoint = std::make_pair(ip, port);
+
+    maxDistBetweenFramesInBatch = config["MaxDistBetweenFramesInBatch"].as<std::uint64_t>();
 }
