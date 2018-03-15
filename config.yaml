@@ -1,15 +1,15 @@
 Clients:
-    - Hostname: kin3d_01
-      Ip:       192.168.1.2
+    - Hostname: kin3d-01
+      Ip:       192.168.4.176
       Port:     8881
       
-    - Hostname: kin3d_02
-      Ip:       192.168.1.3
-      Port:     8881
+#    - Hostname: kin3d-02
+#      Ip:       192.168.1.3
+#      Port:     8881
       
-    - Hostname: kin3d_03
-      Ip:       192.168.1.4
-      Port:     8881
+#    - Hostname: kin3d-03
+#      Ip:       192.168.1.4
+#      Port:     8881
       
 Server:
     Ip:         192.168.1.5
