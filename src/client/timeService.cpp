@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <rpc/server.h>
 
 #include "timeService.h"
@@ -10,6 +12,7 @@ TimeService::TimeService(uint16_t port)
     srv.bind("synchronize",
         [this]() 
         {
+	    std::cout << "CLIENT SYNCHRONIZE" << std::endl;
             time_t deliveryTime = time(nullptr);
             return synchronize(deliveryTime);
         });
@@ -17,6 +20,7 @@ TimeService::TimeService(uint16_t port)
     srv.bind("syncFinished", 
         [this]()
         {
+            std::cout << "CLIENT SYNCFINISHED" << std::endl;
             synchronized = true;
         });
     

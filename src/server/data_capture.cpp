@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ctime>
 #include <cmath>
 
@@ -20,6 +21,7 @@ Server::Server(uint16_t port,
                    RawImage depth, size_t depthW,
                    RawImage ir, size_t irW, time_t timestamp)
             {
+		std::cout << "SERVER PUSH_DATA" << std::endl;
                 auto timeOffset = localtimeOffsets[kinId];
                 pushKinectData(kinId, 
                     KinectData(std::move(rgb), rgbW,
@@ -32,6 +34,7 @@ Server::Server(uint16_t port,
     
 void Server::performSynchronization()
 {
+    std::cout << "SERVER SYNCHRO START" << std::endl;
     for (const auto &entry : clientsEndpoints)
     {
         const auto &kinId = entry.first;
