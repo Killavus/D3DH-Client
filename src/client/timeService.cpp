@@ -18,7 +18,7 @@ TimeService::TimeService(uint16_t port)
         [this]()
         {
             synchronized = true;
-            rpcSrv.stop();
+            rpc::this_server().stop();
         });
     
     rpcSrv.async_run();

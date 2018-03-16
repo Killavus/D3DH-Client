@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
     
     while (!timeService.isSynchronized())
     {
+        IF_DEBUG(std::cerr << "Waiting for sync" << std::endl);
         sleep(1);
     }
     
