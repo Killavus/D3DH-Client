@@ -1,6 +1,10 @@
 #ifndef TIMESERVICE_H
 #define TIMESERVICE_H
 
+#include <memory>
+
+#include <rpc/server.h>
+
 class TimeService
 {
 public:
@@ -8,8 +12,9 @@ public:
     bool isSynchronized();
 
 private:
+    rpc::server rpcSrv;
     bool synchronized;
-
+    
     std::pair<time_t, time_t> synchronize(time_t deliveryTime);
 };
 

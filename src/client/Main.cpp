@@ -41,7 +41,8 @@ void mainLoop(rpc::client &client)
     auto irVec = copyToVector(ir->data, ir->width * ir->height);
     auto depthVec = copyToVector(depth->data, depth->width * depth->height);
     
-    client.call("pushKinectData", kinectId, rgbVec, rgb->width, 
+    IF_DEBUG(std::cerr << "Sending frame" << std::endl);
+    client.async_call("pushKinectData", kinectId, rgbVec, rgb->width, 
         depthVec, depth->width,  irVec, ir->width, captureTime);
 
     //std::cout << "rgb: " << rgb->timestamp << " | ir: " << ir->timestamp << " | depth: " << depth->timestamp << std::endl;
@@ -53,7 +54,9 @@ void mainLoop(rpc::client &client)
 
 int main(int argc, char *argv[]) 
 {
-    Config config("../config.yaml");
+    ArgsParser parser(argc, argv);
+    
+    Config config(parser.getOption("config_path"));
     TimeService timeService(config.clientsEndpoints[getHostname()].second);
     
     while (!timeService.isSynchronized())

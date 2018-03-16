@@ -1,36 +1,33 @@
-#include <iostream>
-
-#include <rpc/server.h>
+#include <rpc/this_server.h>
 
 #include "timeService.h"
+#include "utils.h"
 
 TimeService::TimeService(uint16_t port)
-    : synchronized(false)
-{
-    rpc::server srv(port);
-        
-    srv.bind("synchronize",
+    : rpcSrv(port)
+    , synchronized(false)
+{        
+    rpcSrv.bind("synchronize",
         [this]() 
         {
-	    std::cout << "CLIENT SYNCHRONIZE" << std::endl;
             time_t deliveryTime = time(nullptr);
             return synchronize(deliveryTime);
         });
     
-    srv.bind("syncFinished", 
+    rpcSrv.bind("syncFinished", 
         [this]()
         {
-            std::cout << "CLIENT SYNCFINISHED" << std::endl;
             synchronized = true;
+            rpcSrv.stop();
         });
     
-    srv.async_run();
+    rpcSrv.async_run();
 }
 
 std::pair<time_t, time_t> TimeService::synchronize(time_t deliveryTime)
 {
     time_t sendingTime = time(nullptr);
-    return std::make_pair(deliveryTime, sendingTime);
+    return { deliveryTime, sendingTime };
 }
 
 bool TimeService::isSynchronized()

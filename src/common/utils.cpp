@@ -1,5 +1,6 @@
 #include <climits>
 #include <cstring>
+#include <iostream>
 #include <unistd.h>
 
 #include <yaml-cpp/yaml.h>
@@ -41,3 +42,28 @@ Config::Config(std::string path)
 
     maxDistBetweenFramesInBatch = config["MaxDistBetweenFramesInBatch"].as<std::uint64_t>();
 }
+
+ArgsParser::ArgsParser(int argc, char ** argv)
+{
+    for (int i = 0; i < argc; ++i)
+    {
+        auto option = std::string(argv[i]);
+        auto pos = option.find_first_of('=');
+        auto optionName = option.substr(0, pos);
+        auto optionVal = option.substr(pos + 1);
+        
+        options[optionName] = optionVal;
+    }
+}
+
+std::string ArgsParser::getOption(std::string optKey)
+{
+    auto it = options.find(optKey);
+    if (it != options.end())
+        return it->second;
+    
+    std::cerr << "Option " << optKey << " wasn't provided" << std::endl;
+    std::cerr << "Usage: " << optKey << "=val" << std::endl;
+    exit(1);
+}
+
