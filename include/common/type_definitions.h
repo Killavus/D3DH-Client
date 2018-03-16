@@ -60,7 +60,9 @@ using PackOfFrames = std::unordered_map<KinectId, KinectData>;
 
 class PackOfFramesHandler {
 public:
-    PackOfFramesHandler(std::uint64_t epsilon);
+    PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
+                        std::uint8_t numberOfKinects,
+                        std::size_t minNumberOfFramesInPackageToAccept);
 
     void putFrame(const KinectId& kinectId, KinectData&& data);
     boost::optional<PackOfFrames> getNextPackOfFrames();
@@ -74,6 +76,8 @@ private:
     std::map<std::uint64_t, PackOfFrames> packages;
     std::queue<PackOfFrames> readyPackOfFrames;
     std::uint64_t maxDistBetweenFramesInBatch;
+    std::uint8_t numberOfKinects;
+    std::size_t minNumberOfFramesInPackageToAccept;
 };
 
 

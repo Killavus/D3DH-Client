@@ -9,7 +9,9 @@ int main(int argc, char **argv)
     ArgsParser parser(argc, argv);
     Config config(parser.getOption("config_path"));
     
-    PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch);
+    PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
+                                          config.numberOfKinects,
+                                          config.minNumberOfFramesInPackageToAccept);
     Server srv(config.serverEndpoint.second, 
                config.clientsEndpoints, frameSynchronizer);
     srv.performSynchronization();

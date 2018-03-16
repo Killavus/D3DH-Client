@@ -41,6 +41,8 @@ Config::Config(std::string path)
     serverEndpoint = std::make_pair(ip, port);
 
     maxDistBetweenFramesInBatch = config["MaxDistBetweenFramesInBatch"].as<std::uint64_t>();
+    numberOfKinects = config["NumberOfKinects"].as<std::uint8_t>();
+    minNumberOfFramesInPackageToAccept = config["MinNumberOfFramesInPackageToAccept"].as<std::size_t>();
 }
 
 ArgsParser::ArgsParser(int argc, char ** argv)

@@ -16,3 +16,5 @@ Server:
     Port:       8881
 
 MaxDistBetweenFramesInBatch: 30
+NumberOfKinects: 3
+MinNumberOfFramesInPackageToAccept: 2

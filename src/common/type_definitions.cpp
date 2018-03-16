@@ -72,8 +72,12 @@ Image::Image(RawImage img, int w)
 }
 
 
-PackOfFramesHandler::PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch)
+PackOfFramesHandler::PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
+                                         std::uint8_t numberOfKinects,
+                                         std::size_t minNumberOfFramesInPackageToAccept)
     : maxDistBetweenFramesInBatch(maxDistBetweenFramesInBatch)
+    , numberOfKinects(numberOfKinects)
+    , minNumberOfFramesInPackageToAccept(minNumberOfFramesInPackageToAccept)
 {
 }
 
@@ -84,14 +88,14 @@ void PackOfFramesHandler::putFrame(const std::string& kinectId, KinectData&& dat
     packages[frameID].insert(std::pair<std::string, KinectData>(kinectId, std::move(data)));
 
     auto currentIt = packages.find(frameID);
-    if (currentIt->second.size() == 3)
+    if (currentIt->second.size() == numberOfKinects)
     {
         for (auto it = packages.begin(); it != currentIt; )
         {
-            if (it->second.size() >= 2)
+            if (it->second.size() >= minNumberOfFramesInPackageToAccept)
             {
                 std::lock_guard<std::mutex> guard(readyPackOfFramesMutex);
-                readyPackOfFrames.push(it->second);
+                readyPackOfFrames.push(std::move(it->second));
                 packages.erase(it++);
             }
             else
@@ -107,7 +111,7 @@ boost::optional<PackOfFrames> PackOfFramesHandler::getNextPackOfFrames()
     std::lock_guard<std::mutex> guard(readyPackOfFramesMutex);
     if (!readyPackOfFrames.empty())
     {
-        auto result = readyPackOfFrames.front();
+        auto result = std::move(readyPackOfFrames.front());
         readyPackOfFrames.pop();
         return result;
     }

@@ -23,6 +23,8 @@ struct Config
     std::unordered_map<KinectId, Endpoint> clientsEndpoints;
     Endpoint serverEndpoint;
     std::uint64_t maxDistBetweenFramesInBatch;
+    std::uint8_t numberOfKinects;
+    std::size_t minNumberOfFramesInPackageToAccept;
 };
 
 class ArgsParser
