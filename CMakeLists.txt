@@ -13,7 +13,7 @@ FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(glfw3 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
-FIND_PACKAGE(Boost 1.63.0 REQUIRED thread)
+FIND_PACKAGE(Boost REQUIRED thread)
 FIND_PACKAGE(Threads REQUIRED)
 
 # HACK:rpclib because Findrpclib does not set RPCLIB_LIBS
@@ -53,3 +53,9 @@ ADD_EXECUTABLE(Server
     src/server/data_capture.cpp
     src/server/main.cpp)
 TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT})
+
+set(OPENGL_LIBRARY ${OPENGL_LIBRARY} -lglfw -lrt -lm -ldl -lGLEW -lGLU -lGL)
+set(CALIBRATION_HEADERS ${CALIBRATION_HEADERS} include/client/Camera.h)
+add_executable(calibrate src/calibration/calibrate.cpp src/client/Camera.cpp src/calibration/calibration_window.cpp include/calibration/calibration_window.h)
+target_link_libraries(calibrate ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES})
+target_link_libraries(calibrate ${OPENGL_LIBRARY})
