@@ -289,6 +289,7 @@ int main()
             cv::Mat(ir->height, ir->width, CV_32FC1, ir->data).copyTo(irmat);
             cv::Mat(depth->height, depth->width, CV_32FC1, depth->data).copyTo(depthmat);
 
+
             // Gather the points
             vector<cv::Point2f> pointBufColor;
             vector<cv::Point2f> pointBufIr;
@@ -302,6 +303,25 @@ int main()
             {
                 std::cout << "Both cameras found chessboard." << std::endl;
                 std::cout << "It would be nice to draw the pictures :( but no picture showing :(" << std::endl;
+                
+                imwrite("rgbmat" + to_string(points_color.size())+".jpg",rgbmat);
+		// This will show the minimum and maximum values 
+		// because there are some problems with the images
+		double min,max;
+		minMaxLoc(irmat,&min,&max);
+		std::cout << "Minmax in ir " << min << " " << max << std::endl;
+		minMaxLoc(depthmat,&min, &max);
+		std::cout << "Minmax in depth " << min << " " << max << std::endl;
+
+		// This will convert the images to printable mode and save them
+		Mat new_ir;
+		irmat.convertTo(new_ir,CV_16U);
+
+		Mat new_depth;
+		depthmat.convertTo(new_depth,CV_16U);
+		
+                imwrite("irmat" + to_string(points_color.size())+".jpg",new_ir);
+                imwrite("depthmat" + to_string(points_color.size())+".jpg",new_depth);
 
                 Mat viewGray;
                 cvtColor(rgbmat, viewGray, COLOR_BGR2GRAY);
