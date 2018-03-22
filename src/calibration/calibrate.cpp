@@ -270,9 +270,10 @@ int main()
     do
     {
         // If c is pressed then capture stuff.
-        if((glfwGetKey(window.getGLFWwindow(),GLFW_KEY_C) == GLFW_PRESS
-           || glfwGetKey(window.getGLFWwindow(),GLFW_KEY_C) == GLFW_REPEAT) && !collecting_photo)
-        {
+        //if((glfwGetKey(window.getGLFWwindow(),GLFW_KEY_C) == GLFW_PRESS
+        //   || glfwGetKey(window.getGLFWwindow(),GLFW_KEY_C) == GLFW_REPEAT) && !collecting_photo)
+        if(true)
+	{
             std::cout << "Pressed!" << std::endl;
             collecting_photo = true;
             if (!cam.getFrame(frame_map)) {
@@ -304,7 +305,7 @@ int main()
                 std::cout << "Both cameras found chessboard." << std::endl;
                 std::cout << "It would be nice to draw the pictures :( but no picture showing :(" << std::endl;
                 
-                imwrite("rgbmat" + to_string(points_color.size())+".jpg",rgbmat);
+                imwrite("rgbmat" + to_string(points_color.size())+".png",rgbmat);
 		// This will show the minimum and maximum values 
 		// because there are some problems with the images
 		double min,max;
@@ -314,14 +315,14 @@ int main()
 		std::cout << "Minmax in depth " << min << " " << max << std::endl;
 
 		// This will convert the images to printable mode and save them
-		Mat new_ir;
-		irmat.convertTo(new_ir,CV_16U);
+		//Mat new_ir;
+		//irmat.convertTo(new_ir,CV_16U);
 
-		Mat new_depth;
-		depthmat.convertTo(new_depth,CV_16U);
+		//Mat new_depth;
+		//depthmat.convertTo(new_depth,CV_16U);
 		
-                imwrite("irmat" + to_string(points_color.size())+".jpg",new_ir);
-                imwrite("depthmat" + to_string(points_color.size())+".jpg",new_depth);
+                imwrite("irmat" + to_string(points_color.size())+".png",irmat);
+                imwrite("depthmat" + to_string(points_color.size())+".png",depthmat);
 
                 Mat viewGray;
                 cvtColor(rgbmat, viewGray, COLOR_BGR2GRAY);
