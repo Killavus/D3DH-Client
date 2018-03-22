@@ -15,6 +15,7 @@ FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
 FIND_PACKAGE(Boost REQUIRED thread)
 FIND_PACKAGE(Threads REQUIRED)
+FIND_PACKAGE(GLEW REQUIRED)
 
 # HACK:rpclib because Findrpclib does not set RPCLIB_LIBS
 set(FIND_RPCLIB_PATHS
@@ -43,6 +44,7 @@ INCLUDE_DIRECTORIES(
 	${OpenCV_INCLUDE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${RPCLIB_INCLUDE_DIR}
+        ${GLEW_INCLUDE_DIRS}
 )
 
 ADD_EXECUTABLE(Client src/client/Camera.cpp src/client/Main.cpp)
@@ -58,4 +60,4 @@ set(OPENGL_LIBRARY ${OPENGL_LIBRARY} -lglfw -lrt -lm -ldl -lGLEW -lGLU -lGL)
 set(CALIBRATION_HEADERS ${CALIBRATION_HEADERS} include/client/Camera.h)
 add_executable(calibrate src/calibration/calibrate.cpp src/client/Camera.cpp src/calibration/calibration_window.cpp include/calibration/calibration_window.h)
 target_link_libraries(calibrate ${OpenCV_LIBS} glfw ${freenect2_LIBRARIES})
-target_link_libraries(calibrate ${OPENGL_LIBRARY})
+target_link_libraries(calibrate ${OPENGL_LIBRARY} ${GLEW_LIBRARIES})
