@@ -4,6 +4,7 @@
 #include "opencv2/opencv.hpp"
 
 #include "frame_processors.h"
+#include "utils.h"
 
 using namespace cv;
 
@@ -28,9 +29,13 @@ void ToFileWriter::processFrames()
 	{
 		auto nextFrameMaybe = frameHandler.getNextPackOfFrames();
 		if (!nextFrameMaybe)
+		{
+			IF_DEBUG(std::cerr << "[ToFileWriter] SLEEPING... Waiting for next frame batch" << std::endl);
 			sleep(1);
+		}
 		else
 		{
+			IF_DEBUG(std::cerr << "[ToFileWriter] Processing next frame batch" << std::endl);
 			auto &frameData = *nextFrameMaybe;
 			for (auto &entry : frameData)
 			{
