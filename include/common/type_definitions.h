@@ -20,7 +20,6 @@ using Times = std::vector<timeType>;
 struct Image
 {
     Image(RawImage img, int w, int h);
-    Image(RawImage img, int w);
     
     RawImage img;
     int width, height;
@@ -28,8 +27,9 @@ struct Image
 
 struct KinectData
 {
-    KinectData(RawImage rgb, size_t rgbW, RawImage depth, size_t depthW,
-        RawImage ir, size_t irW, timeType time);
+    KinectData(RawImage rgb, size_t rgbW, size_t rgbH, 
+	RawImage depth, size_t depthW, size_t depthH,
+        RawImage ir, size_t irW, size_t irH, timeType time);
     
     Image rgb, depth, ir;
     timeType timestamp;

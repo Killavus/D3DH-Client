@@ -12,6 +12,9 @@
 
 #define CONFIG_FNAME "config.ini"
 
+#include "opencv2/opencv.hpp"
+using namespace cv;
+
 void mainLoop(rpc::client &client)
 {
   libfreenect2::Freenect2 freenect;
@@ -27,7 +30,7 @@ void mainLoop(rpc::client &client)
   Camera cam(freenect, 0);
   libfreenect2::FrameMap frame_map;
   libfreenect2::Frame *rgb, *ir, *depth;
-
+  int iteration = 0;
   while (true) {
     if (!cam.getFrame(frame_map)) {
       std::cout << "Failed to get frame." << std::endl;
@@ -38,13 +41,18 @@ void mainLoop(rpc::client &client)
     ir = frame_map[libfreenect2::Frame::Ir];
     depth = frame_map[libfreenect2::Frame::Depth];
     
-    auto rgbVec = copyToVector(rgb->data, rgb->width * rgb->height);
-    auto irVec = copyToVector(ir->data, ir->width * ir->height);
-    auto depthVec = copyToVector(depth->data, depth->width * depth->height);
-    
+    auto rgbVec = copyToVector(rgb->data, 
+	rgb->width * rgb->height * rgb->bytes_per_pixel);
+    auto irVec = copyToVector(ir->data, 
+	ir->width * ir->height * ir->bytes_per_pixel);
+    auto depthVec = copyToVector(depth->data, 
+	depth->width * depth->height * depth->bytes_per_pixel);
+	
     IF_DEBUG(std::cerr << "Sending frame" << std::endl);
-    client.async_call("pushKinectData", kinectId, rgbVec, rgb->width, 
-        depthVec, depth->width,  irVec, ir->width, captureTime);
+    client.async_call("pushKinectData", kinectId, 
+	rgbVec, rgb->width, rgb->height,
+        depthVec, depth->width, depth->height,
+        irVec, ir->width, ir->height,  captureTime);
 
     //std::cout << "rgb: " << rgb->timestamp << " | ir: " << ir->timestamp << " | depth: " << depth->timestamp << std::endl;
 

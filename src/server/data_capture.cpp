@@ -16,15 +16,17 @@ Server::Server(uint16_t port,
     , clientsEndpoints(std::move(clientsEndpoints)) 
     {
         rpcSrv.bind("pushKinectData", 
-            [this](KinectId kinId, RawImage rgb, size_t rgbW, 
-                   RawImage depth, size_t depthW,
-                   RawImage ir, size_t irW, timeType timestamp)
+            [this](KinectId kinId, 
+		   RawImage rgb, size_t rgbW, size_t rgbH,
+                   RawImage depth, size_t depthW, size_t depthH,
+                   RawImage ir, size_t irW, size_t irH, timeType timestamp)
             {
                 auto timeOffset = localtimeOffsets[kinId];
                 pushKinectData(kinId, 
-                    KinectData(std::move(rgb), rgbW,
-                        std::move(depth), depthW,
-                        std::move(ir), irW, timestamp + timeOffset));
+                    KinectData(std::move(rgb), rgbW, rgbH,
+                        std::move(depth), depthW, depthH,
+                        std::move(ir), irW, irH,
+			timestamp + timeOffset));
             });
 
         rpcSrv.async_run();
