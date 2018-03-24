@@ -14,7 +14,6 @@
 #define IF_DEBUG(EXP) EXP;
 #endif
 
-using timeType = std::uint64_t;
 
 std::string getHostname();
 std::vector<unsigned char> copyToVector(unsigned char *img, size_t size);

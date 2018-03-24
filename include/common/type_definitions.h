@@ -14,7 +14,7 @@
 using Endpoint = std::pair<std::string, uint16_t>;
 using KinectId = std::string;
 using RawImage = std::vector<unsigned char>;
-using timeType = std::uint64_t;
+using timeType = std::int64_t;
 using Times = std::vector<timeType>;
 
 struct Image

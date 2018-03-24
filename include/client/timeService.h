@@ -5,7 +5,7 @@
 
 #include <rpc/server.h>
 
-using timeType = std::uint64_t;
+#include "type_definitions.h"
 
 class TimeService
 {

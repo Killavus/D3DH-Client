@@ -5,6 +5,7 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include "type_definitions.h"
 #include "utils.h"
 
 std::string getHostname()

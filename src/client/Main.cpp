@@ -7,6 +7,7 @@
 
 #include "Camera.h"
 #include "timeService.h"
+#include "type_definitions.h"
 #include "utils.h"
 
 #define CONFIG_FNAME "config.ini"

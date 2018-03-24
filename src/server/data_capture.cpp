@@ -81,14 +81,7 @@ void Server::performSynchronization()
 
 void Server::pushKinectData(KinectId kinId, KinectData data)
 {
-    IF_DEBUG(
-        static int counter = 0;
-        if (counter % 30 == 0)
-        {
-            ++counter; 
-            std::cerr << "Frame arrived" << std::endl;
-        }
-    );
+    IF_DEBUG(std::cerr << "Frame arrived - kinId: " << kinId << std::endl;);
     
     frameSynchronizer.putFrame(kinId, std::move(data));
 }

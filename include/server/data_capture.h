@@ -9,8 +9,6 @@
 
 #include "type_definitions.h"
 
-using timeType = std::uint64_t;
-
 class Server
 {
 public:

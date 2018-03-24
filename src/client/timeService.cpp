@@ -1,6 +1,7 @@
 #include <rpc/this_server.h>
 
 #include "timeService.h"
+#include "type_definitions.h"
 #include "utils.h"
 
 TimeService::TimeService(uint16_t port)
