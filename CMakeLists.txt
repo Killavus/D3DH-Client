@@ -13,7 +13,7 @@ FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(glfw3 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
-FIND_PACKAGE(Boost REQUIRED thread)
+FIND_PACKAGE(Boost REQUIRED thread system filesystem)
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(yaml-cpp REQUIRED)
 
@@ -69,9 +69,12 @@ ADD_DEPENDENCIES(Client Utils)
 ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
     src/server/data_capture.cpp
+    src/frame_processors.cpp
     src/server/main.cpp)
 TARGET_LINK_LIBRARIES(Server 
     ${RPCLIB_LIBS} 
-    ${CMAKE_THREAD_LIBS_INIT} 
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${Boost_LIBRARIES}
+    ${OpenCV_LIBS}
     Utils)
 ADD_DEPENDENCIES(Server Utils)
