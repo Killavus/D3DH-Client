@@ -10,7 +10,7 @@ TimeService::TimeService(uint16_t port)
     rpcSrv.bind("synchronize",
         [this]() 
         {
-            time_t deliveryTime = time(nullptr);
+            timeType deliveryTime = getTime();
             return synchronize(deliveryTime);
         });
     
@@ -24,9 +24,9 @@ TimeService::TimeService(uint16_t port)
     rpcSrv.async_run();
 }
 
-std::pair<time_t, time_t> TimeService::synchronize(time_t deliveryTime)
+std::pair<timeType, timeType> TimeService::synchronize(timeType deliveryTime)
 {
-    time_t sendingTime = time(nullptr);
+    timeType sendingTime = getTime();
     return { deliveryTime, sendingTime };
 }
 

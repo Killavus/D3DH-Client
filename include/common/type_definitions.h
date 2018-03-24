@@ -1,7 +1,6 @@
 #ifndef TYPE_DEFINITIONS_H
 #define TYPE_DEFINITIONS_H
 
-#include <ctime>
 #include <mutex>
 #include <tuple>
 #include <queue>
@@ -15,7 +14,8 @@
 using Endpoint = std::pair<std::string, uint16_t>;
 using KinectId = std::string;
 using RawImage = std::vector<unsigned char>;
-using Times = std::vector<time_t>;
+using timeType = std::uint64_t;
+using Times = std::vector<timeType>;
 
 struct Image
 {
@@ -29,10 +29,10 @@ struct Image
 struct KinectData
 {
     KinectData(RawImage rgb, size_t rgbW, RawImage depth, size_t depthW,
-        RawImage ir, size_t irW, time_t time);
+        RawImage ir, size_t irW, timeType time);
     
     Image rgb, depth, ir;
-    time_t timestamp;
+    timeType timestamp;
 };
 
 class ClientToFramesMapping

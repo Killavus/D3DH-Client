@@ -52,7 +52,7 @@ void ClientToFramesMapping::dataAssert(const KinectId &kinId)
 }
 
 KinectData::KinectData(RawImage rgb, size_t rgbW, RawImage depth, size_t depthW,
-    RawImage ir, size_t irW, time_t time)
+    RawImage ir, size_t irW, timeType time)
     : rgb(std::move(rgb), rgbW)
     , depth(std::move(depth), depthW)
     , ir(std::move(ir), irW)

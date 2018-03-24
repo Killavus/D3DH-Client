@@ -31,7 +31,7 @@ void mainLoop(rpc::client &client)
     if (!cam.getFrame(frame_map)) {
       std::cout << "Failed to get frame." << std::endl;
     }
-    time_t captureTime = std::time(nullptr);
+    timeType captureTime = getTime();
     
     rgb = frame_map[libfreenect2::Frame::Color];
     ir = frame_map[libfreenect2::Frame::Ir];

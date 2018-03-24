@@ -5,6 +5,8 @@
 
 #include <rpc/server.h>
 
+using timeType = std::uint64_t;
+
 class TimeService
 {
 public:
@@ -15,7 +17,7 @@ private:
     rpc::server rpcSrv;
     bool synchronized;
     
-    std::pair<time_t, time_t> synchronize(time_t deliveryTime);
+    std::pair<timeType, timeType> synchronize(timeType deliveryTime);
 };
 
 #endif // TIMESERVICE_H

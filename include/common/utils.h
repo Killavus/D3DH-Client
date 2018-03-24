@@ -1,6 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <chrono>
 #include <string>
 #include <vector>
 
@@ -12,9 +13,12 @@
 #else
 #define IF_DEBUG(EXP) EXP;
 #endif
-    
+
+using timeType = std::uint64_t;
+
 std::string getHostname();
 std::vector<unsigned char> copyToVector(unsigned char *img, size_t size);
+timeType getTime();
 
 struct Config
 {
@@ -36,5 +40,6 @@ public:
 private:
     std::unordered_map<std::string, std::string> options;
 };
+
 
 #endif // UTILS_H

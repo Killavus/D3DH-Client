@@ -9,6 +9,8 @@
 
 #include "type_definitions.h"
 
+using timeType = std::uint64_t;
+
 class Server
 {
 public:
@@ -24,7 +26,7 @@ private:
     rpc::server rpcSrv;
     PackOfFramesHandler &frameSynchronizer;
     std::unordered_map<KinectId, Endpoint> clientsEndpoints;
-    std::unordered_map<KinectId, time_t> localtimeOffsets;
+    std::unordered_map<KinectId, timeType> localtimeOffsets;
 };
 
 #endif // DATA_CAPTURE_H

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <ctime>
 #include <cmath>
 
 #include <rpc/client.h>
@@ -19,7 +18,7 @@ Server::Server(uint16_t port,
         rpcSrv.bind("pushKinectData", 
             [this](KinectId kinId, RawImage rgb, size_t rgbW, 
                    RawImage depth, size_t depthW,
-                   RawImage ir, size_t irW, time_t timestamp)
+                   RawImage ir, size_t irW, timeType timestamp)
             {
                 auto timeOffset = localtimeOffsets[kinId];
                 pushKinectData(kinId, 
@@ -45,14 +44,14 @@ void Server::performSynchronization()
         
         for (int i = 0; i < numOfCalls; ++i)
         {
-            time_t sendingTime = std::time(nullptr);
+            timeType sendingTime = getTime();
             // result = <client delivery time, client sending time>
-            auto result = client.call("synchronize").as<std::pair<time_t, time_t>>();
-            time_t deliveryTime = std::time(nullptr);
+            auto result = client.call("synchronize").as<std::pair<timeType, timeType>>();
+            timeType deliveryTime = getTime();
 
-            time_t propagationTime = (result.first - sendingTime +
+            timeType propagationTime = (result.first - sendingTime +
                 deliveryTime - result.second) / 2;
-            time_t timeOffset = sendingTime + propagationTime - result.first;
+            timeType timeOffset = sendingTime + propagationTime - result.first;
             
             auto it = localtimeOffsets.find(kinId);
             if (it != localtimeOffsets.end())

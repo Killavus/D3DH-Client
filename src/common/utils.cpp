@@ -22,6 +22,14 @@ std::vector<unsigned char> copyToVector(unsigned char *img, size_t size)
     return result;
 }
 
+timeType getTime()
+{
+    return std::chrono::duration_cast< std::chrono::milliseconds >(
+        std::chrono::system_clock::now().time_since_epoch()
+    ).count();
+}
+
+
 Config::Config(std::string path)
 {
     YAML::Node config = YAML::LoadFile(path);
