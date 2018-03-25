@@ -1,5 +1,5 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef INC_3DHUMANCAPTURE_CAMERA_H
+#define INC_3DHUMANCAPTURE_CAMERA_H
 #include <libfreenect2/libfreenect2.hpp>
 #include <libfreenect2/frame_listener_impl.h>
 
@@ -17,4 +17,4 @@ class Camera {
     libfreenect2::SyncMultiFrameListener listener;
 };
 
-#endif //CAMERA_H
+#endif //INC_3DHUMANCAPTURE_CAMERA_H

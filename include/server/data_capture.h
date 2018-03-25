@@ -1,5 +1,5 @@
-#ifndef DATA_CAPTURE_H
-#define DATA_CAPTURE_H
+#ifndef INC_3DHUMANCAPTURE_DATA_CAPTURE_H
+#define INC_3DHUMANCAPTURE_DATA_CAPTURE_H
 
 #include <cstdint>
 #include <unordered_map>
@@ -27,4 +27,5 @@ private:
     std::unordered_map<KinectId, timeType> localtimeOffsets;
 };
 
-#endif // DATA_CAPTURE_H
+#endif //INC_3DHUMANCAPTURE_DATA_CAPTURE_H
+
