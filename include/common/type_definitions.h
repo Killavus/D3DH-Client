@@ -1,5 +1,5 @@
-#ifndef TYPE_DEFINITIONS_H
-#define TYPE_DEFINITIONS_H
+#ifndef INC_3DHUMANCAPTURE_SERVER_TYPE_DEFINITIONS_H
+#define INC_3DHUMANCAPTURE_SERVER_TYPE_DEFINITIONS_H
 
 #include <chrono>
 #include <mutex>
@@ -37,4 +37,5 @@ private:
     std::unordered_map<std::string, std::mutex> dataMutex;
 };
 
-#endif
+#endif //INC_3DHUMANCAPTURE_SERVER_TYPE_DEFINITIONS_H
+

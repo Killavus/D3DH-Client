@@ -4,12 +4,12 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include "calibration/calibration_window.h"
 
 bool Window::glfw_initialized = false;
-bool Window::glew_initialized = false;
+bool Window::glad_initialized = false;
 
 void Window::initialize_glfw() {
     if(!glfw_initialized)
@@ -29,12 +29,14 @@ void Window::terminate_glfw() {
     }
 }
 
-void Window::initialize_glew() {
-    if(!glew_initialized) {
-        if (glewInit() != GLEW_OK) {
-            fprintf(stderr, "Failed to initialize GLEW\n");
+void Window::initialize_glad() {
+    if(!glad_initialized) {
+        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+            fprintf(stderr, "Failed to initialize GLAD\n");
             terminate_glfw();
             exit(-1);
+        } else {
+          glad_initialized = true;
         }
     }
 }
@@ -65,9 +67,7 @@ Window::Window(unsigned int res_x, unsigned int res_y, const char *title)
 
     glfwMakeContextCurrent(window);
 
-    glewExperimental = GL_TRUE;
-
-    initialize_glew();
+    initialize_glad();
 
     glEnable(GL_CULL_FACE);
 //    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );

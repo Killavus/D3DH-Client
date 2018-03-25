@@ -9,14 +9,14 @@
 
 class Window {
     static bool glfw_initialized;
-    static bool glew_initialized;
+    static bool glad_initialized;
 private:
     unsigned int res_x,res_y;
     GLFWwindow * window;
 
     static void initialize_glfw();
     static void terminate_glfw();
-    static void initialize_glew();
+    static void initialize_glad();
 
     void set_opengl();
 public:

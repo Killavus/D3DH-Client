@@ -1,5 +1,5 @@
-#ifndef FRAME_SYNHRONIZATION_H
-#define FRAME_SYNHRONIZATION_H
+#ifndef INC_3DHUMANCAPTURE_FRAME_SYNHRONIZATION_H
+#define INC_3DHUMANCAPTURE_FRAME_SYNHRONIZATION_H
 
 #include "type_definitions.h"
 
@@ -11,4 +11,4 @@ private:
     ClientToFramesMapping &clientToFrames;
 };
 
-#endif // FRAME_SYNHRONIZATION_H
+#endif //INC_3DHUMANCAPTURE_FRAME_SYNHRONIZATION_H
