@@ -6,7 +6,7 @@
 #include "server/frontend.h"
 
 Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor): frameProcessor(frameProcessor) {
-  if (glfwInit() == GLFW_FALSE) {
+  if (!glfwInit()) {
     std::cerr << "Failed to initialize GLFW." << std::endl;
     std::exit(EXIT_FAILURE); 
   }
