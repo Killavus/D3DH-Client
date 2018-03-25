@@ -86,7 +86,9 @@ ADD_EXECUTABLE(Server
     src/common/type_definitions.cpp
     src/server/data_capture.cpp
     src/server/frame_processors.cpp
+    src/server/frontend.cpp
     src/server/pack_of_frames_to_disk_processor.cpp
+    src/server/pack_of_frames_frontend_processor.cpp
     src/server/main.cpp
     ${GLAD_SRC})
 TARGET_LINK_LIBRARIES(Server 

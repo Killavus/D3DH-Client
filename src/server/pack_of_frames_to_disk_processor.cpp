@@ -6,7 +6,7 @@
 using namespace cv;
 
 PackOfFramesToDiskProcessor::PackOfFramesToDiskProcessor(const std::string& directoryName) :
-  directory(directoryName) {
+  directory(directoryName), PackOfFramesProcessor() {
   boost::filesystem::path dir(directoryName);
   boost::filesystem::create_directory(dir);
 }

@@ -11,6 +11,7 @@ class FrameProcessorBase
 {
 public:
     FrameProcessorBase(PackOfFramesHandler &frameHandler);
+    virtual void processFramesStep() = 0;
     virtual void processFrames() = 0;
     virtual ~FrameProcessorBase() = default;
 
@@ -18,26 +19,17 @@ protected:
     PackOfFramesHandler &frameHandler;
 };
 
-class ToFileWriter : public FrameProcessorBase
-{
-public:
-    ToFileWriter(std::string directory, PackOfFramesHandler &frameHandler);
-    void processFrames() override;
-    virtual ~ToFileWriter() = default;
-
-private:
-    std::string directory;
-};
-
 class ChainFrameProcessor : public FrameProcessorBase {
 public:
   ChainFrameProcessor(PackOfFramesHandler &frameHandler);
   virtual ~ChainFrameProcessor() = default;
 
-  virtual void processFrames() override;
+  void processFramesStep() override;
+  void processFrames() override;
   void addProcessor(std::shared_ptr<PackOfFramesProcessor> processorPtr);
 
 private:
+  int frameCounter;
   std::vector<std::shared_ptr<PackOfFramesProcessor>> processors;
 };
 

@@ -10,29 +10,28 @@ FrameProcessorBase::FrameProcessorBase(PackOfFramesHandler &frameHandler)
 	: frameHandler(frameHandler)
 {}
 
-ChainFrameProcessor::ChainFrameProcessor(PackOfFramesHandler &frameHandler) : FrameProcessorBase(frameHandler) {}
+ChainFrameProcessor::ChainFrameProcessor(PackOfFramesHandler &frameHandler) : FrameProcessorBase(frameHandler), frameCounter(0) {}
+
+void ChainFrameProcessor::processFramesStep() {
+  auto nextFrameMaybe = frameHandler.getNextPackOfFrames();
+
+  if (!nextFrameMaybe) {
+    IF_DEBUG(std::cerr << "[ChainFrameProcessor] Skipping frame..." << std::endl);
+  } else {
+    IF_DEBUG(std::cerr << "[ChainFrameProcessor] Processing next frame batch" << std::endl);
+
+    for(auto &it : processors) {
+      auto &frameData = *nextFrameMaybe;
+      it->onNewFrame(frameData, frameCounter);
+    }
+  }
+
+  ++frameCounter;
+}
 
 void ChainFrameProcessor::processFrames()
 {
-  int frameCounter = 0;
-  while (true) {
-    auto nextFrameMaybe = frameHandler.getNextPackOfFrames();
-
-    if (!nextFrameMaybe) {
-      IF_DEBUG(std::cerr << "[ChainFrameProcessor] SLEEPING... Waiting for next frame batch" << std::endl);
-      sleep(1);
-    }
-    else {
-			IF_DEBUG(std::cerr << "[ChainFrameProcessor] Processing next frame batch" << std::endl);
-
-      for(auto &it : processors) {
-        auto &frameData = *nextFrameMaybe;
-        it->onNewFrame(frameData, frameCounter);
-      }
-    }
-
-    ++frameCounter;
-  }
+  while (true) { processFramesStep(); }
 }
 
 void ChainFrameProcessor::addProcessor(std::shared_ptr<PackOfFramesProcessor> processorPtr) {
