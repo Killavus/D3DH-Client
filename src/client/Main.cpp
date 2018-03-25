@@ -10,8 +10,6 @@
 #include "type_definitions.h"
 #include "utils.h"
 
-#define CONFIG_FNAME "config.ini"
-
 #include "opencv2/opencv.hpp"
 using namespace cv;
 
@@ -53,8 +51,6 @@ void mainLoop(rpc::client &client)
 	rgbVec, rgb->width, rgb->height,
         depthVec, depth->width, depth->height,
         irVec, ir->width, ir->height,  captureTime);
-
-    //std::cout << "rgb: " << rgb->timestamp << " | ir: " << ir->timestamp << " | depth: " << depth->timestamp << std::endl;
 
     cam.releaseFrame(frame_map);
   }
