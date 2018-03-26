@@ -15,7 +15,7 @@ Camera::Camera(libfreenect2::Freenect2 &freenect, int idx) : listener(frame_type
   #ifdef LIBFREENECT2_WITH_CUDA_SUPPORT
     libfreenect2::PacketPipeline *pipeline = new libfreenect2::CudaPacketPipeline();
   #else
-    libfreenect2::PacketPipeline *pipeline = new libfreenect2::CpuPacketPipeline();
+    libfreenect2::PacketPipeline *pipeline = new libfreenect2::OpenGLPacketPipeline();
   #endif
 
   device = freenect.openDevice(idx, pipeline);
