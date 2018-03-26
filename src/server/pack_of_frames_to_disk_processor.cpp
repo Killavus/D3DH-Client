@@ -17,22 +17,26 @@ void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames& framePacks, int frame
 {
     cv::Mat depthmat, rgbmat, irmat;
   
+    auto frameNoStr = std::to_string(frameNo);
+    boost::filesystem::path dir(directory + "/" + frameNoStr);
+    boost::filesystem::create_directory(dir);
+    
     for (auto &entry : framePacks) 
     { 
-        std::string path = directory + "/" + std::to_string(frameNo) + 
-            "_" + entry.first + "_depth_" + ".png";
+        std::string path = directory + "/" + frameNoStr + 
+            "/" + entry.first + "_depth_" + ".png";
         cv::Mat(entry.second.depth.height, entry.second.depth.width, CV_32FC1, 
         entry.second.depth.img.data()).copyTo(depthmat);
         cv::imwrite(path, depthmat);
 
-        path = directory + "/" + std::to_string(frameNo) + 
-            "_" + entry.first + "_rgb_" + ".png";
+        path = directory + "/" + frameNoStr + 
+            "/" + entry.first + "_rgb_" + ".png";
         cv::Mat(entry.second.rgb.height, entry.second.rgb.width, CV_8UC4, 
             entry.second.rgb.img.data()).copyTo(rgbmat);
         cv::imwrite(path, rgbmat);
         
-        path = directory + "/" + std::to_string(frameNo) + 
-            "_" + entry.first + "_ir_" + ".png";
+        path = directory + "/" + frameNoStr + 
+            "/" + entry.first + "_ir_" + ".png";
         cv::Mat(entry.second.ir.height, entry.second.ir.width, CV_32FC1, 
             entry.second.ir.img.data()).copyTo(irmat);
         cv::imwrite(path, irmat);
