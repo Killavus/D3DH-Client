@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "type_definitions.h"
+#include "utils.h"
 
 void ClientToFramesMapping::initData(std::vector<KinectId> kinectsIds)
 {
@@ -84,10 +85,12 @@ void PackOfFramesHandler::putFrame(const std::string& kinectId, KinectData&& dat
     auto currentIt = packages.find(frameID);
     if (currentIt->second.size() == numberOfKinects)
     {
-        for (auto it = packages.begin(); it != currentIt; )
+        auto end = ++currentIt;
+        for (auto it = packages.begin(); it != end; )
         {
             if (it->second.size() >= minNumberOfFramesInPackageToAccept)
             {
+                IF_DEBUG(std::cerr << "[PackOfFramesHandler] Batch gathered, putting pack to queue" << std::endl);
                 std::lock_guard<std::mutex> guard(readyPackOfFramesMutex);
                 readyPackOfFrames.push(std::move(it->second));
                 packages.erase(it++);
