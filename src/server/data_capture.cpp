@@ -59,16 +59,18 @@ void Server::performSynchronization()
             if (it != localtimeOffsets.end())
                 it->second += timeOffset;
             else
-                localtimeOffsets[kinId] = 0;
+                localtimeOffsets[kinId] = timeOffset;
         }
         
-        for (auto &timeOffsetEntry : localtimeOffsets)
-        {
-            timeOffsetEntry.second /= numOfCalls;
-            IF_DEBUG(std::cerr << "Timeline offset for " 
-                << timeOffsetEntry.first << ": "
-                << timeOffsetEntry.second << std::endl);
-        }
+        localtimeOffsets[kinId] /= numOfCalls;
+    }
+    
+    for (auto &timeOffsetEntry : localtimeOffsets)
+    {
+        timeOffsetEntry.second /= numOfCalls;
+        IF_DEBUG(std::cerr << "Timeline offset for " 
+            << timeOffsetEntry.first << ": "
+            << timeOffsetEntry.second << std::endl);
     }
     
     for (const auto &entry : clientsEndpoints)
