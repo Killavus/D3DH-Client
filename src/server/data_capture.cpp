@@ -15,7 +15,7 @@ Server::Server(uint16_t port,
     , frameSynchronizer(frameSynchronizer)
     , clientsEndpoints(std::move(clientsEndpoints)) 
     {
-        rpcSrv.bind("pushKinectData", 
+        rpcSrv.bind("pushAllKinectData", 
             [this](KinectId kinId, 
 		   RawImage rgb, size_t rgbW, size_t rgbH,
                    RawImage depth, size_t depthW, size_t depthH,
@@ -29,7 +29,7 @@ Server::Server(uint16_t port,
 			timestamp + timeOffset));
             });
         
-        rpcSrv.bind("pushKinectData", 
+        rpcSrv.bind("pushDepthKinectData", 
             [this](KinectId kinId, 
                    RawImage depth, size_t depthW, size_t depthH,
                    timeType timestamp)
