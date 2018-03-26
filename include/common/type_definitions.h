@@ -32,6 +32,15 @@ struct Image
     int width, height;
 };
 
+struct EnumClassHash
+{
+    template <typename T>
+    std::size_t operator()(T t) const
+    {
+        return static_cast<std::size_t>(t);
+    }
+};
+
 struct KinectData
 {
     KinectData(RawImage rgb, size_t rgbW, size_t rgbH, 
@@ -41,7 +50,7 @@ struct KinectData
     KinectData(RawImage depth, size_t depthW, size_t depthH,
         timeType time);
     
-    std::unordered_map<ImageType, Image> images;
+    std::unordered_map<ImageType, Image, EnumClassHash> images;
     timeType timestamp;
 };
 
