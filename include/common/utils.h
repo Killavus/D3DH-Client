@@ -8,9 +8,9 @@
 #include "type_definitions.h"
 
 #ifdef NDEBUG
-#include <iostream>
 #define IF_DEBUG(EXP) ;
 #else
+#include <iostream>
 #define IF_DEBUG(EXP) EXP;
 #endif
 
@@ -22,12 +22,14 @@ timeType getTime();
 struct Config
 {
     Config(std::string path);
+    void printReadedData();
 
     std::unordered_map<KinectId, Endpoint> clientsEndpoints;
     Endpoint serverEndpoint;
     std::uint64_t maxDistBetweenFramesInBatch;
-    std::uint8_t numberOfKinects;
     std::size_t minNumberOfFramesInPackageToAccept;
+    std::string outputDirectory;
+    bool withFrontend;
 };
 
 class ArgsParser

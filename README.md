@@ -8,11 +8,14 @@ This is a client (front-end) for the project.
 * OpenCV (3.4)
 * Freenect2 (0.2.0)
 * GLFW (3.3.0)
+* yaml-cpp (https://github.com/jbeder/yaml-cpp)
+* rpc-lib (https://github.com/rpclib/rpclib)
 
 ## Compilation:
 
 ```
-cmake .
+mkdir build && cd build
+cmake ..
 make
 make install
 ```

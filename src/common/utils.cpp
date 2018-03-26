@@ -48,10 +48,39 @@ Config::Config(std::string path)
     auto ip = config["Server"]["Ip"].as<std::string>();
     auto port = config["Server"]["Port"].as<uint16_t>();
     serverEndpoint = std::make_pair(ip, port);
+    withFrontend = config["Server"]["WithFrontend"].as<bool>();
 
-    maxDistBetweenFramesInBatch = config["MaxDistBetweenFramesInBatch"].as<std::uint64_t>();
-    numberOfKinects = config["NumberOfKinects"].as<std::uint8_t>();
-    minNumberOfFramesInPackageToAccept = config["MinNumberOfFramesInPackageToAccept"].as<std::size_t>();
+    maxDistBetweenFramesInBatch = 
+        config["MaxDistBetweenFramesInBatch"].as<std::uint64_t>();
+    minNumberOfFramesInPackageToAccept = 
+        config["MinNumberOfFramesInPackageToAccept"].as<std::size_t>();
+        
+    outputDirectory = config["OutputDirectory"].as<std::string>();
+    
+    printReadedData();
+}
+
+void Config::printReadedData()
+{
+    std::cerr << "CLIENTS" << std::endl;
+    for (auto &client : clientsEndpoints)
+    {
+        std::cerr << client.first << " " << client.second.first 
+            << " " << client.second.second << std::endl << std::endl;
+    }
+    
+    std::cerr << "SERVER" << std::endl;
+    std::cerr << serverEndpoint.first  << " " << serverEndpoint.second 
+        << std::endl << std::endl;
+    
+    std::cerr << "WithFrontend: " << withFrontend << std::endl;
+    std::cerr << "MaxDistBetweenFramesInBatch: " 
+        << maxDistBetweenFramesInBatch << std::endl;
+    std::cerr << "MinNumberOfFramesInPackageToAccept: " 
+        << minNumberOfFramesInPackageToAccept << std::endl;
+    std::cerr << "OutputDirectory: " << outputDirectory << std::endl;
+    std::cerr << "-----------------------------------------------" 
+        << std::endl << std::endl;
 }
 
 ArgsParser::ArgsParser(int argc, char ** argv)

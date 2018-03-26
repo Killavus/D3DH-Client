@@ -38,7 +38,7 @@ void Frontend::loop() {
   }
 }
 
-void Frontend::putData(PackOfFrames& framesPack) {}
+void Frontend::putData(PackOfFrames& framesPack __attribute__((unused))) {}
 
 Frontend::~Frontend() {
   glfwTerminate();

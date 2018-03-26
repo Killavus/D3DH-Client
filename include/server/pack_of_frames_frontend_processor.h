@@ -6,7 +6,7 @@
 
 class PackOfFramesFrontendProcessor : public PackOfFramesProcessor {
 public:
-  PackOfFramesFrontendProcessor(Frontend &frontend) : frontend(frontend), PackOfFramesProcessor() {}
+  PackOfFramesFrontendProcessor(Frontend &frontend);
   virtual ~PackOfFramesFrontendProcessor() = default;
   void onNewFrame(PackOfFrames& framesPack, int frameNo) override;
 

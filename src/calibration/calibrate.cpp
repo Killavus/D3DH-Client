@@ -207,7 +207,7 @@ void runExtrinsicCalibrationAndSave(vector< vector<Point2f> >& points_first,
     vector<Point3f> boardPoints;
     calcBoardCornerPositions(Size(9,6),50,boardPoints);
     vector<vector<Point3f> > boardPointsBig;
-    for(int i = 0; i < points_first.size();i++)
+    for(size_t i = 0; i < points_first.size();i++)
 	boardPointsBig.push_back(boardPoints);
     const cv::TermCriteria termCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 100, DBL_EPSILON);
 

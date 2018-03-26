@@ -10,34 +10,38 @@
 #include "server/pack_of_frames_to_disk_processor.h"
 #include "server/pack_of_frames_frontend_processor.h"
 
+
 int main(int argc, char **argv)
 {
     ArgsParser parser(argc, argv);
     Config config(parser.getOption("config_path"));
 
-    std::string withFrontend = "YES";
-    
     PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
-                                          config.numberOfKinects,
-                                          config.minNumberOfFramesInPackageToAccept);
+        config.clientsEndpoints.size(),
+        config.minNumberOfFramesInPackageToAccept);
     Server srv(config.serverEndpoint.second, 
-               config.clientsEndpoints, frameSynchronizer);
+        config.clientsEndpoints, frameSynchronizer);
     srv.performSynchronization();
 
-    std::shared_ptr<ChainFrameProcessor> frameProcessor(new ChainFrameProcessor(frameSynchronizer));
-    std::shared_ptr<PackOfFramesProcessor> toDiskProcessor(new PackOfFramesToDiskProcessor("output"));
+    auto frameProcessor = 
+        std::make_shared<ChainFrameProcessor>(frameSynchronizer);
+    auto toDiskProcessor = 
+        std::make_shared<PackOfFramesToDiskProcessor>(config.outputDirectory);
 
-    if (withFrontend == "YES") {
-      Frontend frontend(frameProcessor);
+    if (config.withFrontend) {
+        Frontend frontend(frameProcessor);
 
-      std::shared_ptr<PackOfFramesProcessor> guiUpdateProcessor(new PackOfFramesFrontendProcessor(frontend));
-      frameProcessor->addProcessor(guiUpdateProcessor);
-      frameProcessor->addProcessor(toDiskProcessor);
+        auto guiUpdateProcessor = 
+            std::make_shared<PackOfFramesFrontendProcessor>(frontend);
+        frameProcessor->addProcessor(guiUpdateProcessor);
+        frameProcessor->addProcessor(toDiskProcessor);
 
-      frontend.loop(); 
-    } else {
-      frameProcessor->addProcessor(toDiskProcessor);
-      frameProcessor->processFrames();
+        frontend.loop(); 
+    } 
+    else 
+    {
+        frameProcessor->addProcessor(toDiskProcessor);
+        frameProcessor->processFrames();
     }
 
     return 0;

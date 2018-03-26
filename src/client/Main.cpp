@@ -28,7 +28,7 @@ void mainLoop(rpc::client &client)
   Camera cam(freenect, 0);
   libfreenect2::FrameMap frame_map;
   libfreenect2::Frame *rgb, *ir, *depth;
-  int iteration = 0;
+  
   while (true) {
     if (!cam.getFrame(frame_map)) {
       std::cout << "Failed to get frame." << std::endl;

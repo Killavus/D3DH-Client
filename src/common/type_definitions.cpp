@@ -67,8 +67,8 @@ Image::Image(RawImage img, int w, int h)
 }
 
 PackOfFramesHandler::PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
-                                         std::uint8_t numberOfKinects,
-                                         std::size_t minNumberOfFramesInPackageToAccept)
+    std::size_t numberOfKinects,
+    std::size_t minNumberOfFramesInPackageToAccept)
     : maxDistBetweenFramesInBatch(maxDistBetweenFramesInBatch)
     , numberOfKinects(numberOfKinects)
     , minNumberOfFramesInPackageToAccept(minNumberOfFramesInPackageToAccept)
@@ -79,7 +79,7 @@ void PackOfFramesHandler::putFrame(const std::string& kinectId, KinectData&& dat
 {
     auto frameID = getFrameId(data.timestamp);
     std::lock_guard<std::mutex> guard(packagesMutex);
-    packages[frameID].insert(std::pair<std::string, KinectData>(kinectId, std::move(data)));
+    packages[frameID].insert(std::make_pair(kinectId, std::move(data)));
 
     auto currentIt = packages.find(frameID);
     if (currentIt->second.size() == numberOfKinects)

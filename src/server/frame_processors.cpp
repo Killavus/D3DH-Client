@@ -17,16 +17,15 @@ void ChainFrameProcessor::processFramesStep() {
 
   if (!nextFrameMaybe) {
     IF_DEBUG(std::cerr << "[ChainFrameProcessor] Skipping frame..." << std::endl);
+    sleep(1);
   } else {
     IF_DEBUG(std::cerr << "[ChainFrameProcessor] Processing next frame batch" << std::endl);
-
+    ++frameCounter;
     for(auto &it : processors) {
       auto &frameData = *nextFrameMaybe;
       it->onNewFrame(frameData, frameCounter);
     }
   }
-
-  ++frameCounter;
 }
 
 void ChainFrameProcessor::processFrames()
