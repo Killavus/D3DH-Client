@@ -67,7 +67,6 @@ void Server::performSynchronization()
     
     for (auto &timeOffsetEntry : localtimeOffsets)
     {
-        timeOffsetEntry.second /= numOfCalls;
         IF_DEBUG(std::cerr << "Timeline offset for " 
             << timeOffsetEntry.first << ": "
             << timeOffsetEntry.second << std::endl);
