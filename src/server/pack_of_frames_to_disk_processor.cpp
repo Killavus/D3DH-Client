@@ -2,6 +2,7 @@
 #include <boost/filesystem.hpp>
 
 #include "server/pack_of_frames_to_disk_processor.h"
+#include "utils.h"
 
 using namespace cv;
 
@@ -13,32 +14,33 @@ PackOfFramesToDiskProcessor::PackOfFramesToDiskProcessor(
     boost::filesystem::create_directory(dir);
 }
 
+auto getEncoding(ImageType type)
+{
+    switch (type)
+    {
+        case ImageType::RGB:
+            return CV_8UC4;
+        default:
+            return CV_32FC1;
+    };
+}
+
 void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames& framePacks, int frameNo) 
 {
-    cv::Mat depthmat, rgbmat, irmat;
-  
     auto frameNoStr = std::to_string(frameNo);
     boost::filesystem::path dir(directory + "/" + frameNoStr);
     boost::filesystem::create_directory(dir);
     
-    for (auto &entry : framePacks) 
-    { 
-        std::string path = directory + "/" + frameNoStr + 
-            "/" + entry.first + "_depth_" + ".png";
-        cv::Mat(entry.second.depth.height, entry.second.depth.width, CV_32FC1, 
-        entry.second.depth.img.data()).copyTo(depthmat);
-        cv::imwrite(path, depthmat);
-
-        path = directory + "/" + frameNoStr + 
-            "/" + entry.first + "_rgb_" + ".png";
-        cv::Mat(entry.second.rgb.height, entry.second.rgb.width, CV_8UC4, 
-            entry.second.rgb.img.data()).copyTo(rgbmat);
-        cv::imwrite(path, rgbmat);
-        
-        path = directory + "/" + frameNoStr + 
-            "/" + entry.first + "_ir_" + ".png";
-        cv::Mat(entry.second.ir.height, entry.second.ir.width, CV_32FC1, 
-            entry.second.ir.img.data()).copyTo(irmat);
-        cv::imwrite(path, irmat);
+    for (auto &frameEntry : framePacks) 
+    {
+        for (auto &imgEntry : frameEntry.second.images)
+        {
+            cv::Mat cvMat;
+            std::string path = directory + "/" + frameNoStr + 
+                "/" + frameEntry.first + "_" + imgTypeToStr(imgEntry.first) + "_" + ".png";
+            cv::Mat(imgEntry.second.height, imgEntry.second.width, getEncoding(imgEntry.first), 
+            imgEntry.second.img.data()).copyTo(cvMat);
+            cv::imwrite(path, cvMat);
+        }
     }
 }

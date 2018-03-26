@@ -17,6 +17,13 @@ using RawImage = std::vector<unsigned char>;
 using timeType = std::int64_t;
 using Times = std::vector<timeType>;
 
+enum class ImageType
+{
+    RGB,
+    DEPTH,
+    IR,
+};
+
 struct Image
 {
     Image(RawImage img, int w, int h);
@@ -31,7 +38,10 @@ struct KinectData
 	RawImage depth, size_t depthW, size_t depthH,
         RawImage ir, size_t irW, size_t irH, timeType time);
     
-    Image rgb, depth, ir;
+    KinectData(RawImage depth, size_t depthW, size_t depthH,
+        timeType time);
+    
+    std::unordered_map<ImageType, Image> images;
     timeType timestamp;
 };
 

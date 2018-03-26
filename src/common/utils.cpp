@@ -30,6 +30,19 @@ timeType getTime()
     ).count();
 }
 
+std::string imgTypeToStr(ImageType type)
+{
+    switch (type)
+    {
+        case ImageType::RGB:
+            return "rgb";
+        case ImageType::DEPTH:
+            return "depth";
+        default:
+            return "ir";
+    };
+}
+
 
 Config::Config(std::string path)
 {

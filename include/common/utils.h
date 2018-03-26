@@ -18,6 +18,7 @@
 std::string getHostname();
 std::vector<unsigned char> copyToVector(unsigned char *img, size_t size);
 timeType getTime();
+std::string imgTypeToStr(ImageType type);
 
 struct Config
 {

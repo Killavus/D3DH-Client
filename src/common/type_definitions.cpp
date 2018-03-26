@@ -55,11 +55,17 @@ void ClientToFramesMapping::dataAssert(const KinectId &kinId)
 KinectData::KinectData(RawImage rgb, size_t rgbW, size_t rgbH,
     RawImage depth, size_t depthW, size_t depthH,
     RawImage ir, size_t irW, size_t irH, timeType time)
-    : rgb(std::move(rgb), rgbW, rgbH)
-    , depth(std::move(depth), depthW, depthH)
-    , ir(std::move(ir), irW, irH)
-    , timestamp(time)
+    : timestamp(time)
 {
+    images.emplace(ImageType::RGB, Image(std::move(rgb), rgbW, rgbH));
+    images.emplace(ImageType::DEPTH, Image(std::move(depth), depthW, depthH));
+    images.emplace(ImageType::IR, Image(std::move(ir), irW, irH));
+}
+
+KinectData::KinectData(RawImage depth, size_t depthW, size_t depthH, timeType time)
+    : timestamp(time)
+{
+    images.emplace(ImageType::DEPTH, Image(std::move(depth), depthW, depthH));
 }
 
 Image::Image(RawImage img, int w, int h) 

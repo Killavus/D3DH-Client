@@ -28,6 +28,17 @@ Server::Server(uint16_t port,
                         std::move(ir), irW, irH,
 			timestamp + timeOffset));
             });
+        
+        rpcSrv.bind("pushKinectData", 
+            [this](KinectId kinId, 
+                   RawImage depth, size_t depthW, size_t depthH,
+                   timeType timestamp)
+            {
+                auto timeOffset = localtimeOffsets[kinId];
+                pushKinectData(kinId, 
+                    KinectData(std::move(depth), depthW, depthH,
+			timestamp + timeOffset));
+            });
 
         rpcSrv.async_run();
     }
