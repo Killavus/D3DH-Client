@@ -1,0 +1,6 @@
+[submodule "ext/Phelsuma"]
+	path = ext/Phelsuma
+	url = https://github.com/Killavus/Phelsuma.git
+[submodule "ext/sce_vectormath"]
+	path = ext/sce_vectormath
+	url = https://github.com/erwincoumans/sce_vectormath.git

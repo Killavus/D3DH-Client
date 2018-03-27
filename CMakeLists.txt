@@ -12,7 +12,7 @@ FIND_PACKAGE(Boost REQUIRED thread system filesystem)
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(yaml-cpp REQUIRED)
 
-SET(GLAD_SRC src/common/glad.c)
+SET(GLAD_SRC "${PROJECT_SOURCE_DIR}/src/common/glad.c")
 
 # Adding NanoGUI since it does not provide a proper CMake definition:
 SET(FIND_NANOGUI_PATHS
@@ -99,6 +99,7 @@ TARGET_LINK_LIBRARIES(Server
     ${Boost_LIBRARIES}
     ${OpenCV_LIBS}
     ${CMAKE_DL_LIBS}
+    Phelsuma
     Utils)
 ADD_DEPENDENCIES(Server Utils)
 TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${NANOGUI_LIBS} -ldl)
@@ -110,10 +111,14 @@ ADD_EXECUTABLE(calibrate
   src/calibration/calibration_window.cpp
   ${GLAD_SRC}
 )
-target_link_libraries(
-  calibrate
+TARGET_LINK_LIBRARIES(calibrate
   glfw
   ${CMAKE_DL_LIBS}
   ${freenect2_LIBRARIES}
   ${OpenCV_LIBS}
 )
+
+SET(PHELSUMA_BUILD_EXAMPLES OFF)
+SET(PHELSUMA_GLAD_SRC_PATH ${GLAD_SRC})
+SET(PHELSUMA_SCE_VECTORMATH_PATH "${PROJECT_SOURCE_DIR}/ext/sce_vectormath/include")
+ADD_SUBDIRECTORY("ext/Phelsuma")
