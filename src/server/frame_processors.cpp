@@ -16,7 +16,7 @@ void ChainFrameProcessor::processFramesStep() {
   auto nextFrameMaybe = frameHandler.getNextPackOfFrames();
 
   if (!nextFrameMaybe) {
-    IF_DEBUG(std::cerr << "[ChainFrameProcessor] Skipping frame..." << std::endl);
+    // IF_DEBUG(std::cerr << "[ChainFrameProcessor] Skipping frame..." << std::endl);
     sleep(1);
   } else {
     IF_DEBUG(std::cerr << "[ChainFrameProcessor] Processing next frame batch" << std::endl);
