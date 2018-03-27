@@ -9,7 +9,7 @@ FIND_PACKAGE(rpclib REQUIRED)
 FIND_PACKAGE(Boost REQUIRED thread)
 FIND_PACKAGE(Threads REQUIRED)
 
-SET(GLAD_SRC src/common/glad.c)
+SET(GLAD_SRC "${PROJECT_SOURCE_DIR}/src/common/glad.c")
 
 # Adding NanoGUI since it does not provide a proper CMake definition:
 SET(FIND_NANOGUI_PATHS
@@ -89,7 +89,9 @@ ADD_EXECUTABLE(calibrate
 target_link_libraries(
   calibrate
   -ldl
-  glfw
-  ${freenect2_LIBRARIES}
-  ${OpenCV_LIBS}
 )
+
+SET(PHELSUMA_BUILD_EXAMPLES OFF)
+SET(PHELSUMA_GLAD_SRC_PATH ${GLAD_SRC})
+SET(PHELSUMA_SCE_VECTORMATH_PATH "${PROJECT_SOURCE_DIR}/ext/sce_vectormath/include")
+ADD_SUBDIRECTORY("ext/Phelsuma")
