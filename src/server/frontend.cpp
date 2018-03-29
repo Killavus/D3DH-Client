@@ -69,13 +69,29 @@ void KinectOGLData::reset()
   depthReady = false;
 }
 
-void KinectOGLData::draw()
+void KinectOGLData::draw(ViewType type)
 {
+  glActiveTexture(GL_TEXTURE0);
+  switch(type) {
+    case VIEW_DEPTH:
+      if(!depthReady) { return; }
+      glBindTexture(GL_TEXTURE_RECTANGLE, depthTex);
+      break;
+    case VIEW_RGB:
+      if(!rgbReady) { return; }
+      glBindTexture(GL_TEXTURE_RECTANGLE, rgbTex);
+      break;
+    case VIEW_IR:
+      if(!irReady) { return; }
+      glBindTexture(GL_TEXTURE_RECTANGLE, irTex);
+      break;
+  }
+
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void KinectOGLData::setFrame(const KinectData &data)
 {
-
   for (auto &frame : data.images)
   {
     GLint internalFormat, format;
@@ -186,18 +202,29 @@ void Frontend::draw()
   switch (currentViewType)
   {
   case VIEW_RGB:
-
+    previewRGB.use();
     break;
   case VIEW_IR:
-
+    previewGray.use();
     break;
   case VIEW_DEPTH:
-
+    previewGray.use();
     break;
   case VIEW_PCLOUD:
     // TODO: Point cloud retrieval.
     return;
     break;
+  }
+
+  if (currentViewType == VIEW_RGB || currentViewType == VIEW_IR || currentViewType == VIEW_DEPTH) {
+    if (currentDeviceId != "") {
+      glBindVertexArray(screenVao);
+      auto it = oglData.find(currentDeviceId);
+      it->second.draw(currentViewType);
+    }
+  } else if(currentViewType == VIEW_PCLOUD) {
+    // TODO: Point cloud retrieval.
+    return;
   }
 }
 

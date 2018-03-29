@@ -7,5 +7,7 @@ PackOfFramesFrontendProcessor::PackOfFramesFrontendProcessor(Frontend &frontend)
 {}
 
 void PackOfFramesFrontendProcessor::onNewFrame(
-    PackOfFrames& framesPack __attribute__((unused)), 
-    int frameNo __attribute__((unused))) {}
+    PackOfFrames& framesPack,
+    int frameNo) {
+    frontend.putData(framesPack);
+}

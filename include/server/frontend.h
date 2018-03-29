@@ -49,7 +49,7 @@ private:
   KinectId currentDeviceId;
   std::unordered_map<KinectId, KinectOGLData> oglData;
 
-  void draw();
+  void draw(ViewType type);
 
   static void initShaders();
   static bool shadersInitialized;
