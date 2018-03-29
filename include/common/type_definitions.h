@@ -27,7 +27,7 @@ enum class ImageType
 struct Image
 {
     Image(RawImage img, int w, int h);
-    
+
     RawImage img;
     int width, height;
 };
@@ -43,13 +43,13 @@ struct EnumClassHash
 
 struct KinectData
 {
-    KinectData(RawImage rgb, size_t rgbW, size_t rgbH, 
-	RawImage depth, size_t depthW, size_t depthH,
-        RawImage ir, size_t irW, size_t irH, timeType time);
-    
+    KinectData(RawImage rgb, size_t rgbW, size_t rgbH,
+               RawImage depth, size_t depthW, size_t depthH,
+               RawImage ir, size_t irW, size_t irH, timeType time);
+
     KinectData(RawImage depth, size_t depthW, size_t depthH,
-        timeType time);
-    
+               timeType time);
+
     std::unordered_map<ImageType, Image, EnumClassHash> images;
     timeType timestamp;
 };
@@ -57,19 +57,19 @@ struct KinectData
 class ClientToFramesMapping
 {
     // !!Assumption!!
-    // in order not to have mutex for idToData I want 
+    // in order not to have mutex for idToData I want
     // initData to be called only once and before any other functions
-    
-public:
+
+  public:
     void initData(std::vector<KinectId> kinectsIds);
     void putFrame(const KinectId &kinId, KinectData data);
     bool empty(const KinectId &kinId);
-    KinectData& peekFirstFrame(const KinectId &kinId);
+    KinectData &peekFirstFrame(const KinectId &kinId);
     KinectData removeFirstFrame(const KinectId &kinId);
-    
-private:
+
+  private:
     void dataAssert(const KinectId &kinId);
-    
+
     using FrameCollection = std::queue<KinectData>;
     std::unordered_map<KinectId, FrameCollection> idToData;
     std::unordered_map<KinectId, std::mutex> dataMutex;
@@ -77,16 +77,17 @@ private:
 
 using PackOfFrames = std::unordered_map<KinectId, KinectData>;
 
-class PackOfFramesHandler {
-public:
+class PackOfFramesHandler
+{
+  public:
     PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
                         std::size_t numberOfKinects,
                         std::size_t minNumberOfFramesInPackageToAccept);
 
-    void putFrame(const KinectId& kinectId, KinectData&& data);
+    void putFrame(const KinectId &kinectId, KinectData &&data);
     boost::optional<PackOfFrames> getNextPackOfFrames();
 
-private:
+  private:
     std::uint64_t getFrameId(std::uint64_t frameID);
 
     std::mutex packagesMutex;

@@ -15,7 +15,7 @@ void ClientToFramesMapping::initData(std::vector<KinectId> kinectsIds)
 void ClientToFramesMapping::putFrame(const KinectId &kinId, KinectData data)
 {
     dataAssert(kinId);
-    
+
     std::lock_guard<std::mutex> guard(dataMutex[kinId]);
     idToData[kinId].push(std::move(data));
 }
@@ -23,15 +23,15 @@ void ClientToFramesMapping::putFrame(const KinectId &kinId, KinectData data)
 bool ClientToFramesMapping::empty(const KinectId &kinId)
 {
     dataAssert(kinId);
-    
+
     std::lock_guard<std::mutex> guard(dataMutex[kinId]);
     return idToData[kinId].empty();
 }
 
-KinectData& ClientToFramesMapping::peekFirstFrame(const KinectId &kinId)
+KinectData &ClientToFramesMapping::peekFirstFrame(const KinectId &kinId)
 {
     dataAssert(kinId);
-    
+
     std::lock_guard<std::mutex> guard(dataMutex[kinId]);
     return idToData[kinId].front();
 }
@@ -39,7 +39,7 @@ KinectData& ClientToFramesMapping::peekFirstFrame(const KinectId &kinId)
 KinectData ClientToFramesMapping::removeFirstFrame(const KinectId &kinId)
 {
     dataAssert(kinId);
-    
+
     std::lock_guard<std::mutex> guard(dataMutex[kinId]);
     auto res = idToData[kinId].front();
     idToData[kinId].pop();
@@ -53,8 +53,8 @@ void ClientToFramesMapping::dataAssert(const KinectId &kinId)
 }
 
 KinectData::KinectData(RawImage rgb, size_t rgbW, size_t rgbH,
-    RawImage depth, size_t depthW, size_t depthH,
-    RawImage ir, size_t irW, size_t irH, timeType time)
+                       RawImage depth, size_t depthW, size_t depthH,
+                       RawImage ir, size_t irW, size_t irH, timeType time)
     : timestamp(time)
 {
     images.emplace(ImageType::RGB, Image(std::move(rgb), rgbW, rgbH));
@@ -68,31 +68,30 @@ KinectData::KinectData(RawImage depth, size_t depthW, size_t depthH, timeType ti
     images.emplace(ImageType::DEPTH, Image(std::move(depth), depthW, depthH));
 }
 
-Image::Image(RawImage img, int w, int h) 
+Image::Image(RawImage img, int w, int h)
     : img(std::move(img)), width(w), height(h)
 {
 }
 
 PackOfFramesHandler::PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
-    std::size_t numberOfKinects,
-    std::size_t minNumberOfFramesInPackageToAccept)
-    : maxDistBetweenFramesInBatch(maxDistBetweenFramesInBatch)
-    , numberOfKinects(numberOfKinects)
-    , minNumberOfFramesInPackageToAccept(minNumberOfFramesInPackageToAccept)
+                                         std::size_t numberOfKinects,
+                                         std::size_t minNumberOfFramesInPackageToAccept)
+    : maxDistBetweenFramesInBatch(maxDistBetweenFramesInBatch), numberOfKinects(numberOfKinects), minNumberOfFramesInPackageToAccept(minNumberOfFramesInPackageToAccept)
 {
 }
 
-void PackOfFramesHandler::putFrame(const std::string& kinectId, KinectData&& data)
+void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData &&data)
 {
     auto frameID = getFrameId(data.timestamp);
     std::lock_guard<std::mutex> guard(packagesMutex);
     packages[frameID].insert(std::make_pair(kinectId, std::move(data)));
 
     auto currentIt = packages.find(frameID);
+
     if (currentIt->second.size() == numberOfKinects)
     {
         auto end = ++currentIt;
-        for (auto it = packages.begin(); it != end; )
+        for (auto it = packages.begin(); it != end;)
         {
             if (it->second.size() >= minNumberOfFramesInPackageToAccept)
             {

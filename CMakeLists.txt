@@ -49,16 +49,17 @@ FIND_LIBRARY(RPCLIB_LIBS
 
 INCLUDE_DIRECTORIES(
   "${PROJECT_SOURCE_DIR}/include"
-	"${PROJECT_SOURCE_DIR}/include/client"
-	"${PROJECT_SOURCE_DIR}/include/server"
-	"${PROJECT_SOURCE_DIR}/include/common"
+  "${PROJECT_SOURCE_DIR}/include/client"
+  "${PROJECT_SOURCE_DIR}/include/server"
+  "${PROJECT_SOURCE_DIR}/include/common"
+  "${PROJECT_SOURCE_DIR}/ext"
+  "${PROJECT_SOURCE_DIR}/ext/sce_vectormath/include"
   ${NANOGUI_INCLUDE_DIR}
-	${freenect2_INCLUDE_DIR}
-	${OpenCV_INCLUDE_DIR}
+  ${freenect2_INCLUDE_DIR}
+  ${OpenCV_INCLUDE_DIR}
   ${Boost_INCLUDE_DIRS}
   ${RPCLIB_INCLUDE_DIR}
   ${YAML_CPP_INCLUDE_DIR}
-  ${NANOGUI_INCLUDE_DIR}
 )
 
 ADD_LIBRARY(Utils
@@ -67,17 +68,17 @@ TARGET_LINK_LIBRARIES(Utils
     ${YAML_CPP_LIBRARIES})
 
 # Client Binary:
-ADD_EXECUTABLE(Client 
+ADD_EXECUTABLE(Client
     src/client/timeService.cpp
-    src/client/Camera.cpp 
+    src/client/Camera.cpp
     src/client/Main.cpp
     ${GLAD_SRC})
-TARGET_LINK_LIBRARIES(Client 
-    ${OpenCV_LIBS} 
-    glfw 
-    ${freenect2_LIBRARIES} 
-    ${Boost_LIBRARIES} 
-    ${RPCLIB_LIBS} 
+TARGET_LINK_LIBRARIES(Client
+    ${OpenCV_LIBS}
+    glfw
+    ${freenect2_LIBRARIES}
+    ${Boost_LIBRARIES}
+    ${RPCLIB_LIBS}
     ${CMAKE_DL_LIBS}
     Utils
     ${CMAKE_THREAD_LIBS_INIT})
@@ -93,8 +94,8 @@ ADD_EXECUTABLE(Server
     src/server/pack_of_frames_frontend_processor.cpp
     src/server/main.cpp
     ${GLAD_SRC})
-TARGET_LINK_LIBRARIES(Server 
-    ${RPCLIB_LIBS} 
+TARGET_LINK_LIBRARIES(Server
+    ${RPCLIB_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
     ${Boost_LIBRARIES}
     ${OpenCV_LIBS}

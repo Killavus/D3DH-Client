@@ -10,35 +10,35 @@
 #include "server/pack_of_frames_to_disk_processor.h"
 #include "server/pack_of_frames_frontend_processor.h"
 
-
 int main(int argc, char **argv)
 {
     ArgsParser parser(argc, argv);
     Config config(parser.getOption("config_path"));
 
     PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
-        config.clientsEndpoints.size(),
-        config.minNumberOfFramesInPackageToAccept);
-    Server srv(config.serverEndpoint.second, 
-        config.clientsEndpoints, frameSynchronizer);
+                                          config.clientsEndpoints.size(),
+                                          config.minNumberOfFramesInPackageToAccept);
+    Server srv(config.serverEndpoint.second,
+               config.clientsEndpoints, frameSynchronizer);
     srv.performSynchronization();
 
-    auto frameProcessor = 
+    auto frameProcessor =
         std::make_shared<ChainFrameProcessor>(frameSynchronizer);
-    auto toDiskProcessor = 
+    auto toDiskProcessor =
         std::make_shared<PackOfFramesToDiskProcessor>(config.outputDirectory);
 
-    if (config.withFrontend) {
+    if (config.withFrontend)
+    {
         Frontend frontend(frameProcessor);
 
-        auto guiUpdateProcessor = 
+        auto guiUpdateProcessor =
             std::make_shared<PackOfFramesFrontendProcessor>(frontend);
         frameProcessor->addProcessor(guiUpdateProcessor);
         frameProcessor->addProcessor(toDiskProcessor);
 
-        frontend.loop(); 
-    } 
-    else 
+        frontend.loop();
+    }
+    else
     {
         frameProcessor->addProcessor(toDiskProcessor);
         frameProcessor->processFrames();
