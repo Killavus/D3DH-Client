@@ -19,6 +19,8 @@ static Shader shaderFromFile(const std::string &path, GLenum type)
   ShaderCompiler compiler = ShaderCompiler::fromFile(path, type);
   Shader shader = compiler.compile();
 
+  GLint success;
+  
   if (shader.invalid())
   {
     std::cerr << path << " -- "
@@ -160,6 +162,8 @@ Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor) : framePr
     std::exit(EXIT_FAILURE);
   }
 
+  glViewport(0, 0, 1024, 768);
+
   GLuint sqVbo, sqEbo;
   GLfloat sq[] = {
       -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
@@ -191,6 +195,9 @@ void Frontend::loop()
   while (!glfwWindowShouldClose(window))
   {
     frameProcessor->processFramesStep();
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     draw();
     glfwSwapBuffers(window);
     glfwPollEvents();

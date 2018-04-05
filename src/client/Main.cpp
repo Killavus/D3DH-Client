@@ -15,6 +15,7 @@ using namespace cv;
 
 void mainLoop(rpc::client &client)
 {
+    int counter = 0;
     libfreenect2::Freenect2 freenect;
     int kinect_count = freenect.enumerateDevices();
 
@@ -37,7 +38,7 @@ void mainLoop(rpc::client &client)
             std::cout << "Failed to get frame." << std::endl;
         }
         timeType captureTime = getTime();
-
+	
         rgb = frame_map[libfreenect2::Frame::Color];
         ir = frame_map[libfreenect2::Frame::Ir];
         depth = frame_map[libfreenect2::Frame::Depth];
@@ -50,6 +51,7 @@ void mainLoop(rpc::client &client)
                                      depth->width * depth->height * depth->bytes_per_pixel);
 
         IF_DEBUG(std::cerr << "Sending frame" << std::endl);
+	//if (counter++ % 10 == 0)
         client.async_call("pushAllKinectData", kinectId,
                           rgbVec, rgb->width, rgb->height,
                           depthVec, depth->width, depth->height,

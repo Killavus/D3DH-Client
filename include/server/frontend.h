@@ -27,7 +27,7 @@ struct KinectOGLData
   KinectOGLData(KinectId id);
   void reset();
   void setFrame(const KinectData &data);
-  void draw();
+  void draw(ViewType type);
 };
 
 class Frontend
@@ -49,7 +49,7 @@ private:
   KinectId currentDeviceId;
   std::unordered_map<KinectId, KinectOGLData> oglData;
 
-  void draw(ViewType type);
+  void draw();
 
   static void initShaders();
   static bool shadersInitialized;

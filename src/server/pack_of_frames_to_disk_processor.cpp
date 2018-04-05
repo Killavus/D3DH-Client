@@ -3,6 +3,7 @@
 
 #include "server/pack_of_frames_to_disk_processor.h"
 #include "utils.h"
+#include <future>
 
 using namespace cv;
 
@@ -27,14 +28,16 @@ auto getEncoding(ImageType type)
 
 void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames &framePacks, int frameNo)
 {
+    auto foo = [this, &framePacks, &frameNo](){
     auto frameNoStr = std::to_string(frameNo);
     boost::filesystem::path dir(directory + "/" + frameNoStr);
     boost::filesystem::create_directory(dir);
 
     for (auto &frameEntry : framePacks)
     {
-        for (auto &imgEntry : frameEntry.second.images)
+ //       for (auto &imgEntry : frameEntry.second.images)
         {
+	    auto &imgEntry =  *frameEntry.second.images.find(ImageType::DEPTH);
             cv::Mat cvMat;
             std::string path = directory + "/" + frameNoStr +
                                "/" + frameEntry.first + "_" + imgTypeToStr(imgEntry.first) + "_" + ".png";
@@ -42,7 +45,9 @@ void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames &framePacks, int frame
             cv::Mat(imgEntry.second.height, imgEntry.second.width, getEncoding(imgEntry.first),
                     imgEntry.second.img.data())
                 .copyTo(cvMat);
-            cv::imwrite(path, cvMat);
+            cv::imwrite(path, cvMat);	
+
         }
-    }
+    }};
+std::async(std::launch::async, foo);
 }

@@ -3,17 +3,17 @@ Clients:
 #      Ip:       192.168.4.176
 #      Port:     8881
       
-    - Hostname: kin3d-2
-      Ip:       127.0.0.1
-      Port:     2137
+#    - Hostname: kin3d-2
+#      Ip:       127.0.0.1
+#      Port:     2137
       
-#    - Hostname: kin3d-3
-#      Ip:       192.168.4.174
-#      Port:     8881
+    - Hostname: kin3d-3
+      Ip:       192.168.4.174
+      Port:     8881
       
 Server:
-    Ip:           192.168.4.175
-    Port:         8881
+    Ip:           192.168.4.174
+    Port:         8882
     WithFrontend: true
 
 MaxDistBetweenFramesInBatch: 30
