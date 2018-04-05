@@ -77,15 +77,15 @@ void KinectOGLData::draw(ViewType type)
   switch(type) {
     case VIEW_DEPTH:
       if(!depthReady) { return; }
-      glBindTexture(GL_TEXTURE_RECTANGLE, depthTex);
+      glBindTexture(GL_TEXTURE_2D, depthTex);
       break;
     case VIEW_RGB:
       if(!rgbReady) { return; }
-      glBindTexture(GL_TEXTURE_RECTANGLE, rgbTex);
+      glBindTexture(GL_TEXTURE_2D, rgbTex);
       break;
     case VIEW_IR:
       if(!irReady) { return; }
-      glBindTexture(GL_TEXTURE_RECTANGLE, irTex);
+      glBindTexture(GL_TEXTURE_2D, irTex);
       break;
   }
 
@@ -104,21 +104,21 @@ void KinectOGLData::setFrame(const KinectData &data)
     switch (frame.first)
     {
     case ImageType::RGB:
-      glBindTexture(GL_TEXTURE_RECTANGLE, rgbTex);
+      glBindTexture(GL_TEXTURE_2D, rgbTex);
       rgbReady = true;
       internalFormat = GL_RGBA;
       format = GL_BGRA;
       type = GL_UNSIGNED_BYTE;
       break;
     case ImageType::IR:
-      glBindTexture(GL_TEXTURE_RECTANGLE, irTex);
+      glBindTexture(GL_TEXTURE_2D, irTex);
       irReady = true;
       internalFormat = GL_R32F;
       format = GL_RED;
       type = GL_FLOAT;
       break;
     case ImageType::DEPTH:
-      glBindTexture(GL_TEXTURE_RECTANGLE, depthTex);
+      glBindTexture(GL_TEXTURE_2D, depthTex);
       depthReady = true;
       internalFormat = GL_R32F;
       format = GL_RED;
@@ -126,12 +126,12 @@ void KinectOGLData::setFrame(const KinectData &data)
       break;
     }
 
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_RECTANGLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_RECTANGLE, 0, internalFormat, frame.second.width, frame.second.height, 0, format, type, frame.second.img.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, frame.second.width, frame.second.height, 0, format, type, frame.second.img.data());
   }
 }
 
