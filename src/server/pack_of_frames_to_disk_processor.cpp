@@ -30,8 +30,8 @@ void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames &framePacks, int frame
 {
     auto foo = [this, &framePacks, &frameNo](){
     auto frameNoStr = std::to_string(frameNo);
-    boost::filesystem::path dir(directory + "/" + frameNoStr);
-    boost::filesystem::create_directory(dir);
+    //boost::filesystem::path dir(directory + "/" + frameNoStr);
+    //boost::filesystem::create_directory(dir);
 
     for (auto &frameEntry : framePacks)
     {
@@ -39,8 +39,7 @@ void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames &framePacks, int frame
         {
 	    auto &imgEntry =  *frameEntry.second.images.find(ImageType::DEPTH);
             cv::Mat cvMat;
-            std::string path = directory + "/" + frameNoStr +
-                               "/" + frameEntry.first + "_" + imgTypeToStr(imgEntry.first) + "_" + ".png";
+            std::string path = directory + "/" + frameEntry.first + "_" + imgTypeToStr(imgEntry.first) + "_" + frameNoStr + ".png";
             IF_DEBUG(std::cerr << "Saving to " << path << std::endl);
             cv::Mat(imgEntry.second.height, imgEntry.second.width, getEncoding(imgEntry.first),
                     imgEntry.second.img.data())

@@ -1,21 +1,21 @@
 Clients:
-#    - Hostname: Kin3D-1
-#      Ip:       192.168.4.176
-#      Port:     8881
-      
-#    - Hostname: kin3d-2
-#      Ip:       192.168.4.175
-#      Port:     2137
+    - Hostname: Kin3D-1
+      Ip:       192.168.4.176
+      Port:     8881
       
     - Hostname: kin3d-2
       Ip:       192.168.4.175
       Port:     8881
       
+    - Hostname: kin3d-3
+      Ip:       192.168.4.174
+      Port:     8881
+      
 Server:
-    Ip:           192.168.4.175
+    Ip:           192.168.4.174
     Port:         8882
     WithFrontend: false
 
 MaxDistBetweenFramesInBatch: 30
-MinNumberOfFramesInPackageToAccept: 1
+MinNumberOfFramesInPackageToAccept: 3
 OutputDirectory: output

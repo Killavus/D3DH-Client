@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        //frameProcessor->addProcessor(toDiskProcessor);
+        frameProcessor->addProcessor(toDiskProcessor);
         frameProcessor->processFrames();
     }
 
