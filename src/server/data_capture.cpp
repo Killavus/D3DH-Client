@@ -36,7 +36,7 @@ Server::Server(uint16_t port,
                                               timestamp + timeOffset));
                 });
 
-    rpcSrv.async_run();
+    rpcSrv.async_run(2);
 }
 
 void Server::performSynchronization()
@@ -92,7 +92,6 @@ void Server::performSynchronization()
 
 void Server::pushKinectData(KinectId kinId, KinectData data)
 {
-    IF_DEBUG(std::cerr << "Frame arrived - kinId: " << kinId << std::endl;);
-
+    IF_DEBUG(std::cerr << "Frame arrived - kinId: " << kinId << " " << data.timestamp<< std::endl;);
     frameSynchronizer.putFrame(kinId, std::move(data));
 }

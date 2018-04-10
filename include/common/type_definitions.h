@@ -76,28 +76,33 @@ class ClientToFramesMapping
 };
 
 using PackOfFrames = std::unordered_map<KinectId, KinectData>;
+using PackOfTimeStamps = std::unordered_map<KinectId, timeType>;
+using TimeLine = std::map<timeType, KinectData>;
 
 class PackOfFramesHandler
 {
   public:
     PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
                         std::size_t numberOfKinects,
-                        std::size_t minNumberOfFramesInPackageToAccept);
+                        std::size_t minNumberOfFramesInPackageToAccept,
+                        timeType windowStartPos);
 
-    void putFrame(const KinectId &kinectId, KinectData &&data);
+    void putFrame(const KinectId &kinectId, KinectData data);
     boost::optional<PackOfFrames> getNextPackOfFrames();
 
   private:
     std::uint64_t getFrameId(std::uint64_t frameID);
 
-    std::mutex packagesMutex;
+    std::mutex timeLinesMutex;
     std::mutex readyPackOfFramesMutex;
 
-    std::map<std::uint64_t, PackOfFrames> packages;
+    std::unordered_map<KinectId, TimeLine> timeLines;
+    std::unordered_map<KinectId, timeType> lastTimestamps;
     std::queue<PackOfFrames> readyPackOfFrames;
     std::uint64_t maxDistBetweenFramesInBatch;
     std::size_t numberOfKinects;
     std::size_t minNumberOfFramesInPackageToAccept;
+    timeType windowStartPos;
 };
 
 #endif //INC_3DHUMANCAPTURE_SERVER_TYPE_DEFINITIONS_H

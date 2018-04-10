@@ -75,19 +75,77 @@ Image::Image(RawImage img, int w, int h)
 
 PackOfFramesHandler::PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
                                          std::size_t numberOfKinects,
-                                         std::size_t minNumberOfFramesInPackageToAccept)
-    : maxDistBetweenFramesInBatch(maxDistBetweenFramesInBatch), numberOfKinects(numberOfKinects), minNumberOfFramesInPackageToAccept(minNumberOfFramesInPackageToAccept)
+                                         std::size_t minNumberOfFramesInPackageToAccept,
+                                         timeType windowStartPos)
+    : maxDistBetweenFramesInBatch(maxDistBetweenFramesInBatch)
+    , numberOfKinects(numberOfKinects)
+    , minNumberOfFramesInPackageToAccept(minNumberOfFramesInPackageToAccept)
+    , windowStartPos(windowStartPos)
 {
 }
 
-void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData &&data)
+typedef std::pair<KinectId, timeType> PairType;
+struct CompareSecond
 {
-    auto frameID = getFrameId(data.timestamp);
-    std::lock_guard<std::mutex> guard(packagesMutex);
-    packages[frameID].insert(std::make_pair(kinectId, std::move(data)));
+    bool operator()(const PairType& left, const PairType& right) const
+    {
+        return left.second < right.second;
+    }
+};
 
-    auto currentIt = packages.find(frameID);
+void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData data)
+{
+    std::lock_guard<std::mutex> guard(timeLinesMutex);
+    
+    lastTimestamps[kinectId] = data.timestamp;
+    timeLines[kinectId].insert(std::make_pair(data.timestamp, std::move(data)));
+    
+    timeType minOldestTimestamp = (*std::min_element(lastTimestamps.begin(), lastTimestamps.end(), CompareSecond())).second;
 
+    while (windowStartPos < minOldestTimestamp)
+    {
+        PackOfTimeStamps currentPack;
+        for (auto it = timeLines.begin(); it != timeLines.end(); ++it)
+        {
+            KinectId kinectId = (*it).first;
+            for (auto kinDataIt = (*it).second.begin(); kinDataIt != (*it).second.end(); ++kinDataIt)
+            {
+                auto currentTime = (*kinDataIt).first;
+                if (currentTime < windowStartPos) {
+                    it->second.erase(kinDataIt);
+                }
+                else if (currentTime < windowStartPos + maxDistBetweenFramesInBatch) {
+                    currentPack[kinectId] = currentTime;
+                    break;
+                }
+            }
+        }
+        if (currentPack.size() >= minNumberOfFramesInPackageToAccept) {
+            PackOfFrames packOfFrames;
+            timeType minTimestamp = std::numeric_limits<timeType>::max();
+            KinectId minKinectId{};
+            
+            for (auto it = currentPack.begin(); it != currentPack.end(); ++it) {
+                KinectId kinectId = (*it).first;
+                timeType timestamp = (*it).second;
+                auto kinDataIt = timeLines[kinectId].find(timestamp);
+                packOfFrames.insert(std::make_pair(kinectId, kinDataIt->second));
+                if (timestamp < minTimestamp) {
+                    minTimestamp = timestamp;
+                    minKinectId = kinectId;
+                }
+            }
+            readyPackOfFrames.push(std::move(packOfFrames));
+            IF_DEBUG(std::cerr << "[PackOfFramesHandler] Batch gathered, putting pack to queue" << std::endl);
+            windowStartPos = minTimestamp + 1;
+	}
+	else {
+             ++windowStartPos;
+        }
+    }
+    
+    ++windowStartPos;
+    /*
     if (currentIt->second.size() == numberOfKinects)
     {
         auto end = ++currentIt;
@@ -106,6 +164,7 @@ void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData &&dat
             }
         }
     }
+    */
 }
 
 boost::optional<PackOfFrames> PackOfFramesHandler::getNextPackOfFrames()

@@ -26,11 +26,11 @@ void mainLoop(rpc::client &client)
     }
 
     std::string kinectId = getHostname();
-
+    std::cout << "B" << std::endl;
     Camera cam(freenect, 0);
     libfreenect2::FrameMap frame_map;
     libfreenect2::Frame *rgb, *ir, *depth;
-
+    std::cout << "C" << std::endl;
     while (true)
     {
         if (!cam.getFrame(frame_map))
@@ -52,10 +52,11 @@ void mainLoop(rpc::client &client)
 
         IF_DEBUG(std::cerr << "Sending frame" << std::endl);
 	//if (counter++ % 10 == 0)
-        client.async_call("pushAllKinectData", kinectId,
-                          rgbVec, rgb->width, rgb->height,
-                          depthVec, depth->width, depth->height,
-                          irVec, ir->width, ir->height, captureTime);
+        //client.async_call("pushAllKinectData", kinectId,
+        //                  rgbVec, rgb->width, rgb->height,
+        //                  depthVec, depth->width, depth->height,
+        //                  irVec, ir->width, ir->height, captureTime);
+client.async_call("pushDepthKinectData", kinectId, depthVec, depth->width, depth->height, captureTime);
 
         cam.releaseFrame(frame_map);
     }

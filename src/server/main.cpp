@@ -17,7 +17,8 @@ int main(int argc, char **argv)
 
     PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
                                           config.clientsEndpoints.size(),
-                                          config.minNumberOfFramesInPackageToAccept);
+                                          config.minNumberOfFramesInPackageToAccept,
+                                          getTime());
     Server srv(config.serverEndpoint.second,
                config.clientsEndpoints, frameSynchronizer);
     srv.performSynchronization();
