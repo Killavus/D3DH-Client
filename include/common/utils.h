@@ -31,6 +31,7 @@ struct Config
     std::size_t minNumberOfFramesInPackageToAccept;
     std::string outputDirectory;
     bool withFrontend;
+    Mode mode;
 };
 
 class ArgsParser

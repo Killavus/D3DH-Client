@@ -69,6 +69,8 @@ TARGET_LINK_LIBRARIES(Utils
 
 # Client Binary:
 ADD_EXECUTABLE(Client
+    src/common/type_definitions.cpp
+    src/client/rpc_package_manager.cpp  
     src/client/timeService.cpp
     src/client/Camera.cpp
     src/client/Main.cpp

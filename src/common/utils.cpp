@@ -69,6 +69,7 @@ Config::Config(std::string path)
         config["MinNumberOfFramesInPackageToAccept"].as<std::size_t>();
         
     outputDirectory = config["OutputDirectory"].as<std::string>();
+    mode = static_cast<Mode>(config["Mode"].as<int>());
     
     printReadedData();
 }
@@ -92,6 +93,7 @@ void Config::printReadedData()
     std::cerr << "MinNumberOfFramesInPackageToAccept: " 
         << minNumberOfFramesInPackageToAccept << std::endl;
     std::cerr << "OutputDirectory: " << outputDirectory << std::endl;
+    std::cerr << "Mode: " << static_cast<int>(mode) << std::endl;
     std::cerr << "-----------------------------------------------" 
         << std::endl << std::endl;
 }

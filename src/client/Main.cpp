@@ -3,9 +3,9 @@
 
 #include <libfreenect2/libfreenect2.hpp>
 #include <libfreenect2/frame_listener_impl.h>
-#include <rpc/client.h>
 
 #include "Camera.h"
+#include "rpc_package_manager.h"
 #include "timeService.h"
 #include "type_definitions.h"
 #include "utils.h"
@@ -13,9 +13,8 @@
 #include "opencv2/opencv.hpp"
 using namespace cv;
 
-void mainLoop(rpc::client &client)
+void mainLoop(RpcPackageManager &rpcManager)
 {
-    int counter = 0;
     libfreenect2::Freenect2 freenect;
     int kinect_count = freenect.enumerateDevices();
 
@@ -26,11 +25,9 @@ void mainLoop(rpc::client &client)
     }
 
     std::string kinectId = getHostname();
-    std::cout << "B" << std::endl;
     Camera cam(freenect, 0);
     libfreenect2::FrameMap frame_map;
     libfreenect2::Frame *rgb, *ir, *depth;
-    std::cout << "C" << std::endl;
     while (true)
     {
         if (!cam.getFrame(frame_map))
@@ -51,13 +48,8 @@ void mainLoop(rpc::client &client)
                                      depth->width * depth->height * depth->bytes_per_pixel);
 
         IF_DEBUG(std::cerr << "Sending frame" << std::endl);
-	//if (counter++ % 10 == 0)
-        //client.async_call("pushAllKinectData", kinectId,
-        //                  rgbVec, rgb->width, rgb->height,
-        //                  depthVec, depth->width, depth->height,
-        //                  irVec, ir->width, ir->height, captureTime);
-client.async_call("pushDepthKinectData", kinectId, depthVec, depth->width, depth->height, captureTime);
-
+        rpcManager.call(rgb, depth, ir, kinectId, captureTime);
+        
         cam.releaseFrame(frame_map);
     }
 }
@@ -75,9 +67,10 @@ int main(int argc, char *argv[])
         sleep(1);
     }
 
+    RpcPackageManager manager(config.mode, config.serverEndpoint);
     rpc::client client(config.serverEndpoint.first, config.serverEndpoint.second);
 
-    mainLoop(client);
+    mainLoop(manager);
 
     return 0;
 }

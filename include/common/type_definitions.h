@@ -24,6 +24,12 @@ enum class ImageType
     IR,
 };
 
+enum class Mode
+{
+    SEND_ALL,
+    SEND_DEPTH,
+};
+
 struct Image
 {
     Image(RawImage img, int w, int h);

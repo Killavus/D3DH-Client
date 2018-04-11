@@ -19,3 +19,7 @@ Server:
 MaxDistBetweenFramesInBatch: 30
 MinNumberOfFramesInPackageToAccept: 3
 OutputDirectory: output
+
+#Mode: SEND_ALL -> 0
+#      SEND_DEPTH -> 1
+Mode: 1
