@@ -10,25 +10,25 @@ FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
 FIND_PACKAGE(Boost REQUIRED thread system filesystem program_options)
 FIND_PACKAGE(Threads REQUIRED)
-FIND_PACKAGE(yaml-cpp REQUIRED)
+#FIND_PACKAGE(yaml-cpp REQUIRED)
 
 SET(GLAD_SRC "${PROJECT_SOURCE_DIR}/src/common/glad.c")
 
 # Adding NanoGUI since it does not provide a proper CMake definition:
-SET(FIND_NANOGUI_PATHS
-  $ENV{NANOGUI_ROOT}
-  ${CMAKE_CURRENT_LIST_DIR}/..
-  ${CMAKE_CURRENT_LIST_DIR}/../build/output/lib
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /opt/local
-  /opt)
+#SET(FIND_NANOGUI_PATHS
+#  $ENV{NANOGUI_ROOT}
+#  ${CMAKE_CURRENT_LIST_DIR}/..
+#  ${CMAKE_CURRENT_LIST_DIR}/../build/output/lib
+#  ~/Library/Frameworks
+#  /Library/Frameworks
+#  /usr/local
+#  /usr
+#  /opt/local
+#  /opt)
 
-FIND_LIBRARY(NANOGUI_LIBS
-  NAMES libnanogui nanogui
-  PATHS ${FIND_NANOGUI_PATHS})
+#FIND_LIBRARY(NANOGUI_LIBS
+#  NAMES libnanogui nanogui
+#  PATHS ${FIND_NANOGUI_PATHS})
 
 # HACK:rpclib because Findrpclib does not set RPCLIB_LIBS
 SET(FIND_RPCLIB_PATHS
@@ -85,35 +85,45 @@ TARGET_LINK_LIBRARIES(Client
 ADD_DEPENDENCIES(Client Utils)
 
 # Server Binary:
-ADD_EXECUTABLE(Server
-    src/common/type_definitions.cpp
-    src/server/data_capture.cpp
-    src/server/frame_processors.cpp
-    src/server/frontend.cpp
-    src/server/pack_of_frames_to_disk_processor.cpp
-    src/server/pack_of_frames_frontend_processor.cpp
-    src/server/main.cpp
-    ${GLAD_SRC})
-TARGET_LINK_LIBRARIES(Server
-    ${RPCLIB_LIBS}
-    ${CMAKE_THREAD_LIBS_INIT}
-    ${Boost_LIBRARIES}
-    ${OpenCV_LIBS}
-    ${CMAKE_DL_LIBS}
-    Phelsuma
-    Utils)
-ADD_DEPENDENCIES(Server Utils)
-TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${NANOGUI_LIBS} -ldl)
+#ADD_EXECUTABLE(Server
+#    src/common/type_definitions.cpp
+#    src/server/data_capture.cpp
+#    src/server/frame_processors.cpp
+#    src/server/frontend.cpp
+#    src/server/pack_of_frames_to_disk_processor.cpp
+#    src/server/pack_of_frames_frontend_processor.cpp
+#    src/server/main.cpp
+#    ${GLAD_SRC})
+#TARGET_LINK_LIBRARIES(Server
+#    ${RPCLIB_LIBS}
+#    ${CMAKE_THREAD_LIBS_INIT}
+#    ${Boost_LIBRARIES}
+#    ${OpenCV_LIBS}
+#    ${CMAKE_DL_LIBS}
+#    Phelsuma
+#    Utils)
+#ADD_DEPENDENCIES(Server Utils)
+#TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${NANOGUI_LIBS} -ldl)
 
 # Calibration Binary:
 ADD_EXECUTABLE(calibrate
   src/calibration/calibrate.cpp
   src/client/Camera.cpp
-  src/calibration/calibration_window.cpp
-  ${GLAD_SRC}
 )
 TARGET_LINK_LIBRARIES(calibrate
-  glfw
+  ${CMAKE_DL_LIBS}
+  ${freenect2_LIBRARIES} 
+  ${Boost_LIBRARIES}
+  ${OpenCV_LIBS}
+)
+
+# Extrinsic Calibration Binary:
+ADD_EXECUTABLE(calibrate_extrinsic
+  src/calibration/calibrate_extrinsic.cpp
+  src/client/Camera.cpp
+)
+TARGET_LINK_LIBRARIES(calibrate_extrinsic
+  aruco
   ${CMAKE_DL_LIBS}
   ${freenect2_LIBRARIES} 
   ${Boost_LIBRARIES}

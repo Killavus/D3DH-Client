@@ -419,13 +419,13 @@ int main(int argc,const char* argv[])
         capture = unique_ptr<VideoCapture>(new VideoCapture(vm["mock"].as<int>()));
 
     cv::namedWindow("rgb", cv::WINDOW_NORMAL);
-    cv::resizeWindow("rgb",800,600);
+    cv::resizeWindow("rgb",640,480);
 
     cv::namedWindow("ir", cv::WINDOW_NORMAL);
-    cv::resizeWindow("ir",800,600);
+    cv::resizeWindow("ir",640,480);
 
     cv::namedWindow("depth", cv::WINDOW_NORMAL);
-    cv::resizeWindow("depth",800,600);
+    cv::resizeWindow("depth",640,480);
 
 
     std::vector<std::vector<Point2f> > pointsColor, pointsIr;
