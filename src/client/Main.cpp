@@ -13,7 +13,7 @@
 #include "opencv2/opencv.hpp"
 using namespace cv;
 
-void mainLoop(RpcPackageManager &rpcManager)
+void mainLoop(RpcPackageManager &rpcManager, int maxNumFramesToBeSent)
 {
     libfreenect2::Freenect2 freenect;
     int kinect_count = freenect.enumerateDevices();
@@ -28,7 +28,9 @@ void mainLoop(RpcPackageManager &rpcManager)
     Camera cam(freenect, 0);
     libfreenect2::FrameMap frame_map;
     libfreenect2::Frame *rgb, *ir, *depth;
-    while (true)
+    
+    int frameCounter = 0;
+    while (frameCounter++ < maxNumFramesToBeSent)
     {
         if (!cam.getFrame(frame_map))
         {
@@ -39,13 +41,6 @@ void mainLoop(RpcPackageManager &rpcManager)
         rgb = frame_map[libfreenect2::Frame::Color];
         ir = frame_map[libfreenect2::Frame::Ir];
         depth = frame_map[libfreenect2::Frame::Depth];
-
-        auto rgbVec = copyToVector(rgb->data,
-                                   rgb->width * rgb->height * rgb->bytes_per_pixel);
-        auto irVec = copyToVector(ir->data,
-                                  ir->width * ir->height * ir->bytes_per_pixel);
-        auto depthVec = copyToVector(depth->data,
-                                     depth->width * depth->height * depth->bytes_per_pixel);
 
         IF_DEBUG(std::cerr << "Sending frame" << std::endl);
         rpcManager.call(rgb, depth, ir, kinectId, captureTime);
@@ -70,7 +65,7 @@ int main(int argc, char *argv[])
     RpcPackageManager manager(config.mode, config.serverEndpoint);
     rpc::client client(config.serverEndpoint.first, config.serverEndpoint.second);
 
-    mainLoop(manager);
+    mainLoop(manager, config.maxNumFramesToBeSent);
 
     return 0;
 }

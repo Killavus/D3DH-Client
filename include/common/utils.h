@@ -32,6 +32,7 @@ struct Config
     std::string outputDirectory;
     bool withFrontend;
     Mode mode;
+    int maxNumFramesToBeSent;
 };
 
 class ArgsParser
