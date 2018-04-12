@@ -29,7 +29,7 @@ Camera::Camera(libfreenect2::Freenect2 &freenect, int idx) : listener(frame_type
   assert(device->start());
 }
 
-Camera::~Camera() {
+void Camera::close() {
   device->stop();
   device->close();
 }

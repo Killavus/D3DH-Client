@@ -6,11 +6,11 @@
 class Camera {
   public:
     Camera(libfreenect2::Freenect2 &freenect, int idx);
-    ~Camera();
 
     std::string serialNumber() const;
     bool getFrame(libfreenect2::FrameMap &map);
     void releaseFrame(libfreenect2::FrameMap &map);
+    void close();
 
   private:
     libfreenect2::Freenect2Device *device;
