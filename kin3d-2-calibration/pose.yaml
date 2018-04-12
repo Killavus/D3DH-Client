@@ -1,0 +1,24 @@
+%YAML:1.0
+---
+Marker_0_id: 348
+Marker_0_rvec: !!opencv-matrix
+   rows: 3
+   cols: 1
+   dt: f
+   data: [ 9.52275842e-02, 1.60814428e+00, 8.38262811e-02 ]
+Marker_0_tvec: !!opencv-matrix
+   rows: 3
+   cols: 1
+   dt: f
+   data: [ -1.14658511e+00, -2.64280587e-01, 1.83872652e+00 ]
+Marker_1_id: 422
+Marker_1_rvec: !!opencv-matrix
+   rows: 3
+   cols: 1
+   dt: f
+   data: [ -1.13347685e+00, 1.28063703e+00, -1.11802018e+00 ]
+Marker_1_tvec: !!opencv-matrix
+   rows: 3
+   cols: 1
+   dt: f
+   data: [ -1.17222059e+00, 3.46391462e-03, 1.79169858e+00 ]
