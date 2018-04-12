@@ -70,6 +70,7 @@ Config::Config(std::string path)
         
     outputDirectory = config["OutputDirectory"].as<std::string>();
     mode = static_cast<Mode>(config["Mode"].as<int>());
+    maxNumFramesToBeSent = config["MaxNumFramesToBeSent"].as<int>();
     
     printReadedData();
 }
@@ -94,6 +95,7 @@ void Config::printReadedData()
         << minNumberOfFramesInPackageToAccept << std::endl;
     std::cerr << "OutputDirectory: " << outputDirectory << std::endl;
     std::cerr << "Mode: " << static_cast<int>(mode) << std::endl;
+    std::cerr << "MaxNumFramesToBeSent: " << maxNumFramesToBeSent << std::endl;
     std::cerr << "-----------------------------------------------" 
         << std::endl << std::endl;
 }

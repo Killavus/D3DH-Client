@@ -12,9 +12,8 @@ RpcPackageManager::~RpcPackageManager()
     while (it != sentCalls.end())
     {
         it->wait();
-        auto next = ++it;
-        sentCalls.erase(it);
-        it = next;
+        auto toBeDeleted = it++;
+        sentCalls.erase(toBeDeleted);
     }
 }
     
