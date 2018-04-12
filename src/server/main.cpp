@@ -7,6 +7,7 @@
 #include "type_definitions.h"
 
 #include "server/frame_processors.h"
+#include "server/pack_of_frames_as_binary_processor.h"
 #include "server/pack_of_frames_to_disk_processor.h"
 #include "server/pack_of_frames_frontend_processor.h"
 
@@ -27,6 +28,8 @@ int main(int argc, char **argv)
         std::make_shared<ChainFrameProcessor>(frameSynchronizer);
     auto toDiskProcessor =
         std::make_shared<PackOfFramesToDiskProcessor>(config.outputDirectory);
+    auto asBinaryProcessor =
+        std::make_shared<PackOfFramesAsBinaryProcessor>(config.outputDirectory);    
 
     if (config.withFrontend)
     {
@@ -42,6 +45,7 @@ int main(int argc, char **argv)
     else
     {
         frameProcessor->addProcessor(toDiskProcessor);
+        frameProcessor->addProcessor(asBinaryProcessor);
         frameProcessor->processFrames();
     }
 

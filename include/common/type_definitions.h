@@ -32,7 +32,17 @@ enum class Mode
 
 struct Image
 {
+    Image();
     Image(RawImage img, int w, int h);
+    
+    template<class Archive>
+    void serialize(Archive &ar, 
+        __attribute__((unused)) const unsigned int version)
+    {
+        ar & img;
+        ar & width;
+        ar & height;
+    }
 
     RawImage img;
     int width, height;
@@ -49,14 +59,26 @@ struct EnumClassHash
 
 struct KinectData
 {
+    KinectData();
     KinectData(RawImage rgb, size_t rgbW, size_t rgbH,
                RawImage depth, size_t depthW, size_t depthH,
                RawImage ir, size_t irW, size_t irH, timeType time);
 
     KinectData(RawImage depth, size_t depthW, size_t depthH,
                timeType time);
+    
+    void saveAsBinary(std::string fileName);
+    static KinectData load(std::string fileName);
 
-    std::unordered_map<ImageType, Image, EnumClassHash> images;
+    template<class Archive>
+    void serialize(Archive &ar,
+        __attribute__((unused)) const unsigned int version)
+    {
+        ar & images;
+        ar & timestamp;
+    }
+    
+    std::unordered_map<ImageType, Image> images;
     timeType timestamp;
 };
 

@@ -50,5 +50,5 @@ void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames &framePacks, int frame
             cv::imwrite(path, cvMat);	
         }
     }};
-std::async(std::launch::async, foo);
+    std::async(std::launch::async, foo);
 }

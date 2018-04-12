@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
 FIND_PACKAGE(rpclib REQUIRED)
-FIND_PACKAGE(Boost REQUIRED thread system filesystem program_options)
+FIND_PACKAGE(Boost REQUIRED thread system filesystem program_options serialization)
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(yaml-cpp REQUIRED)
 
@@ -93,6 +93,7 @@ ADD_EXECUTABLE(Server
     src/server/frame_processors.cpp
     src/server/frontend.cpp
     src/server/pack_of_frames_to_disk_processor.cpp
+    src/server/pack_of_frames_as_binary_processor.cpp
     src/server/pack_of_frames_frontend_processor.cpp
     src/server/main.cpp
     ${GLAD_SRC})

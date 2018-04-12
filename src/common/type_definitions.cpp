@@ -1,4 +1,10 @@
 #include <cassert>
+#include <fstream>
+
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/vector.hpp>
 
 #include "type_definitions.h"
 #include "utils.h"
@@ -67,6 +73,28 @@ KinectData::KinectData(RawImage depth, size_t depthW, size_t depthH, timeType ti
 {
     images.emplace(ImageType::DEPTH, Image(std::move(depth), depthW, depthH));
 }
+
+KinectData::KinectData()
+{}
+
+void KinectData::saveAsBinary(std::string fileName)
+{
+    std::ofstream ofs(fileName);
+    boost::archive::binary_oarchive oa(ofs);
+    oa << *this;
+}
+
+KinectData KinectData::load(std::string fileName)
+{
+    KinectData res;
+    std::ifstream ifs(fileName);
+    boost::archive::binary_iarchive ia(ifs);
+    ia >> res;
+    return res;
+}
+
+Image::Image()
+{}
 
 Image::Image(RawImage img, int w, int h)
     : img(std::move(img)), width(w), height(h)
