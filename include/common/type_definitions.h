@@ -78,7 +78,7 @@ struct KinectData
         ar & timestamp;
     }
     
-    std::unordered_map<ImageType, Image> images;
+    std::unordered_map<ImageType, Image, EnumClassHash> images;
     timeType timestamp;
 };
 

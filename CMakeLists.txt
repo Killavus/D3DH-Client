@@ -120,7 +120,7 @@ TARGET_LINK_LIBRARIES(calibrate
   ${OpenCV_LIBS}
 )
 
-Extrinsic Calibration Binary:
+#Extrinsic Calibration Binary:
 ADD_EXECUTABLE(calibrate_extrinsic
   src/calibration/calibrate_extrinsic.cpp
   src/client/Camera.cpp
