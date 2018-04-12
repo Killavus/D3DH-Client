@@ -498,5 +498,5 @@ int main(int argc,const char* argv[])
         showFrame(frame);
 
     } while(key != ESC_KEY);
-
+    if (!mock) cam->close();
 }

@@ -47,6 +47,8 @@ void mainLoop(RpcPackageManager &rpcManager, int maxNumFramesToBeSent)
         
         cam.releaseFrame(frame_map);
     }
+
+    cam.close();
 }
 
 int main(int argc, char *argv[])
