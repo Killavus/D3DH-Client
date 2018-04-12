@@ -14,21 +14,21 @@ FIND_PACKAGE(yaml-cpp REQUIRED)
 
 SET(GLAD_SRC "${PROJECT_SOURCE_DIR}/src/common/glad.c")
 
-# Adding NanoGUI since it does not provide a proper CMake definition:
+#Adding NanoGUI since it does not provide a proper CMake definition:
 SET(FIND_NANOGUI_PATHS
-  $ENV{NANOGUI_ROOT}
-  ${CMAKE_CURRENT_LIST_DIR}/..
-  ${CMAKE_CURRENT_LIST_DIR}/../build/output/lib
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /opt/local
-  /opt)
+ $ENV{NANOGUI_ROOT}
+ ${CMAKE_CURRENT_LIST_DIR}/..
+ ${CMAKE_CURRENT_LIST_DIR}/../build/output/lib
+ ~/Library/Frameworks
+ /Library/Frameworks
+ /usr/local
+ /usr
+ /opt/local
+ /opt)
 
 FIND_LIBRARY(NANOGUI_LIBS
-  NAMES libnanogui nanogui
-  PATHS ${FIND_NANOGUI_PATHS})
+ NAMES libnanogui nanogui
+ PATHS ${FIND_NANOGUI_PATHS})
 
 # HACK:rpclib because Findrpclib does not set RPCLIB_LIBS
 SET(FIND_RPCLIB_PATHS
@@ -112,11 +112,21 @@ TARGET_LINK_LIBRARIES(Server ${RPCLIB_LIBS} ${CMAKE_THREAD_LIBS_INIT} ${NANOGUI_
 ADD_EXECUTABLE(calibrate
   src/calibration/calibrate.cpp
   src/client/Camera.cpp
-  src/calibration/calibration_window.cpp
-  ${GLAD_SRC}
 )
 TARGET_LINK_LIBRARIES(calibrate
-  glfw
+  ${CMAKE_DL_LIBS}
+  ${freenect2_LIBRARIES} 
+  ${Boost_LIBRARIES}
+  ${OpenCV_LIBS}
+)
+
+Extrinsic Calibration Binary:
+ADD_EXECUTABLE(calibrate_extrinsic
+  src/calibration/calibrate_extrinsic.cpp
+  src/client/Camera.cpp
+)
+TARGET_LINK_LIBRARIES(calibrate_extrinsic
+  aruco
   ${CMAKE_DL_LIBS}
   ${freenect2_LIBRARIES} 
   ${Boost_LIBRARIES}
