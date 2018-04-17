@@ -12,7 +12,7 @@ FIND_PACKAGE(Boost REQUIRED thread system filesystem program_options serializati
 FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(yaml-cpp REQUIRED)
 
-SET(GLAD_SRC "${PROJECT_SOURCE_DIR}/src/common/glad.c")
+SET(GLAD_SRC "${PROJECT_SOURCE_DIR}/src/common")
 
 #Adding NanoGUI since it does not provide a proper CMake definition:
 SET(FIND_NANOGUI_PATHS
@@ -134,6 +134,7 @@ TARGET_LINK_LIBRARIES(calibrate_extrinsic
 )
 
 SET(PHELSUMA_BUILD_EXAMPLES OFF)
+SET(PHELSUMA_GLAD_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/include")
 SET(PHELSUMA_GLAD_SRC_PATH ${GLAD_SRC})
 SET(PHELSUMA_SCE_VECTORMATH_PATH "${PROJECT_SOURCE_DIR}/ext/sce_vectormath/include")
 ADD_SUBDIRECTORY("ext/Phelsuma")
