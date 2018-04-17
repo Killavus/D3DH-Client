@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 PROJECT(3DHumanCapture)
 
 set (CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 
 FIND_PACKAGE(freenect2 REQUIRED)
 FIND_PACKAGE(OpenCV REQUIRED)
@@ -70,7 +70,7 @@ TARGET_LINK_LIBRARIES(Utils
 # Client Binary:
 ADD_EXECUTABLE(Client
     src/common/type_definitions.cpp
-    src/client/rpc_package_manager.cpp  
+    src/client/rpc_package_manager.cpp
     src/client/timeService.cpp
     src/client/Camera.cpp
     src/client/Main.cpp
@@ -96,6 +96,7 @@ ADD_EXECUTABLE(Server
     src/server/pack_of_frames_as_binary_processor.cpp
     src/server/pack_of_frames_frontend_processor.cpp
     src/server/main.cpp
+    src/server/camera_calibration_loader.cpp
     ${GLAD_SRC})
 TARGET_LINK_LIBRARIES(Server
     ${RPCLIB_LIBS}
@@ -115,7 +116,7 @@ ADD_EXECUTABLE(calibrate
 )
 TARGET_LINK_LIBRARIES(calibrate
   ${CMAKE_DL_LIBS}
-  ${freenect2_LIBRARIES} 
+  ${freenect2_LIBRARIES}
   ${Boost_LIBRARIES}
   ${OpenCV_LIBS}
 )
@@ -128,7 +129,7 @@ ADD_EXECUTABLE(calibrate_extrinsic
 TARGET_LINK_LIBRARIES(calibrate_extrinsic
   aruco
   ${CMAKE_DL_LIBS}
-  ${freenect2_LIBRARIES} 
+  ${freenect2_LIBRARIES}
   ${Boost_LIBRARIES}
   ${OpenCV_LIBS}
 )

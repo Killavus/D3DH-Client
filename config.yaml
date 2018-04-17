@@ -15,6 +15,13 @@ Server:
     Ip:           192.168.4.174
     Port:         8882
     WithFrontend: false
+    CameraCalibrations:
+        - Hostname: Kin3D-1
+          Path: /home/killavus/calib_kin1_1704
+        - Hostname: kin3d-2
+          Path: /home/killavus/calib_kin2_1704
+        - Hostname: kin3d-3
+          Path: /home/killavus/calib_kin3_1704
 
 MaxDistBetweenFramesInBatch: 45
 MinNumberOfFramesInPackageToAccept: 2

@@ -26,6 +26,8 @@ struct Config
     void printReadedData();
 
     std::unordered_map<KinectId, Endpoint> clientsEndpoints;
+    std::unordered_map<KinectId, std::string> clientCalibrationPaths;
+
     Endpoint serverEndpoint;
     std::uint64_t maxDistBetweenFramesInBatch;
     std::size_t minNumberOfFramesInPackageToAccept;
@@ -40,7 +42,7 @@ class ArgsParser
 public:
     ArgsParser(int argc, char **argv);
     std::string getOption(std::string optKey);
-    
+
 private:
     std::unordered_map<std::string, std::string> options;
 };

@@ -28,7 +28,7 @@ void mainLoop(RpcPackageManager &rpcManager, int maxNumFramesToBeSent)
     Camera cam(freenect, 0);
     libfreenect2::FrameMap frame_map;
     libfreenect2::Frame *rgb, *ir, *depth;
-    
+
     int frameCounter = 0;
     while (frameCounter++ < maxNumFramesToBeSent)
     {
@@ -37,14 +37,14 @@ void mainLoop(RpcPackageManager &rpcManager, int maxNumFramesToBeSent)
             std::cout << "Failed to get frame." << std::endl;
         }
         timeType captureTime = getTime();
-	
+
         rgb = frame_map[libfreenect2::Frame::Color];
         ir = frame_map[libfreenect2::Frame::Ir];
         depth = frame_map[libfreenect2::Frame::Depth];
 
         IF_DEBUG(std::cerr << "Sending frame" << std::endl);
         rpcManager.call(rgb, depth, ir, kinectId, captureTime);
-        
+
         cam.releaseFrame(frame_map);
     }
 
