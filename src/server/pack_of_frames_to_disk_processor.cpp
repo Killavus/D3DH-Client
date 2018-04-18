@@ -13,8 +13,8 @@ PackOfFramesToDiskProcessor::PackOfFramesToDiskProcessor(
     const std::string &directoryName)
     : directory(directoryName)
 {
-    boost::filesystem::path dir(directoryName);
-    boost::filesystem::create_directory(dir);
+    boost::filesystem::path dir(directoryName + "/images/");
+    boost::filesystem::create_directories(dir);
 }
 
 auto getEncoding(ImageType type)
@@ -41,7 +41,7 @@ void PackOfFramesToDiskProcessor::onNewFrame(PackOfFrames &framePacks, int frame
                 continue;
             
             cv::Mat cvMat;
-            std::string path = directory + "/" + 
+            std::string path = directory + "/images/" + 
                 frameEntry.first + "_" + imgTypeToStr(imgEntry.first) + "_" + 
                 frameNoStr + ".png";
             IF_DEBUG(std::cerr << "Saving to " << path << std::endl);

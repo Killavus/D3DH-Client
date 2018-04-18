@@ -13,8 +13,8 @@ PackOfFramesAsBinaryProcessor::PackOfFramesAsBinaryProcessor(
     const std::string &directoryName)
     : directory(directoryName)
 {
-    boost::filesystem::path dir(directoryName);
-    boost::filesystem::create_directory(dir);
+    boost::filesystem::path dir(directoryName + "/binary/");
+    boost::filesystem::create_directories(dir);
 }
 
 void PackOfFramesAsBinaryProcessor::onNewFrame(PackOfFrames &framePacks, int frameNo)
@@ -24,7 +24,7 @@ void PackOfFramesAsBinaryProcessor::onNewFrame(PackOfFrames &framePacks, int fra
 
     for (auto &frameEntry : framePacks)
     {
-        frameEntry.second.saveAsBinary(directory + "/" + 
+        frameEntry.second.saveAsBinary(directory + "/binary/" + 
                 frameEntry.first + "_batch_"+ 
                 frameNoStr);
     }};
