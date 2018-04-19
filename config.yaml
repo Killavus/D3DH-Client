@@ -14,7 +14,7 @@ Clients:
 Server:
     Ip:           127.0.0.1 
     Port:         8881
-    WithFrontend: false
+    WithFrontend: true
     CameraCalibrations:
         - Hostname: Kin3D-1
           Path: /home/killavus/calib_kin1_1704

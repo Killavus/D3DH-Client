@@ -54,6 +54,7 @@ INCLUDE_DIRECTORIES(
   "${PROJECT_SOURCE_DIR}/include/common"
   "${PROJECT_SOURCE_DIR}/ext"
   "${PROJECT_SOURCE_DIR}/ext/sce_vectormath/include"
+  "${PROJECT_SOURCE_DIR}/ext/Phelsuma/include"
   ${NANOGUI_INCLUDE_DIR}
   ${freenect2_INCLUDE_DIR}
   ${OpenCV_INCLUDE_DIR}

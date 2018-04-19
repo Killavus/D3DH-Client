@@ -83,7 +83,7 @@ int main(int argc, char **argv)
         auto guiUpdateProcessor =
             std::make_shared<PackOfFramesFrontendProcessor>(frontend);
         frameProcessor->addProcessor(guiUpdateProcessor);
-        frameProcessor->addProcessor(toDiskProcessor);
+//        frameProcessor->addProcessor(toDiskProcessor);
 
         frontend.loop();
     }

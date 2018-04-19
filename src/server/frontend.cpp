@@ -9,51 +9,11 @@
 #include <Phelsuma/include/ShaderProgramLinker.h>
 #include <Phelsuma/include/ShaderCompiler.h>
 #include <Phelsuma/include/Shader.h>
+#include <Phelsuma/include/examples/Utils.h>
 
 bool Frontend::shadersInitialized = false;
 ShaderProgram Frontend::previewRGB("");
 ShaderProgram Frontend::previewGray("");
-
-static Shader shaderFromFile(const std::string &path, GLenum type)
-{
-  ShaderCompiler compiler = ShaderCompiler::fromFile(path, type);
-  Shader shader = compiler.compile();
-
-  GLint success;
-
-  if (shader.invalid())
-  {
-    std::cerr << path << " -- "
-              << "Shader compilation error!\n\n"
-              << shader.errorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
-  return shader;
-}
-
-static ShaderProgram makeProgram(
-    std::vector<Shader>::iterator it,
-    std::vector<Shader>::iterator end)
-{
-  ShaderProgramLinker linker;
-  for (; it != end; ++it)
-  {
-    linker.attachShader(*it);
-  }
-
-  ShaderProgram program = linker.link();
-
-  if (program.invalid())
-  {
-    std::cerr << " -- "
-              << "Shader program link error!\n\n"
-              << program.errorMessage() << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
-
-  return program;
-}
 
 KinectOGLData::KinectOGLData(KinectId id) : id(id)
 {
@@ -99,6 +59,9 @@ void KinectOGLData::draw(ViewType type)
     break;
   }
 
+  std::cout << depthTex << " " << rgbTex << " " << irTex << std::endl;
+ 
+  std::cout << "glDrawElements" << std::endl;
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -128,6 +91,7 @@ void KinectOGLData::setFrame(const KinectData &data)
       type = GL_FLOAT;
       break;
     case ImageType::DEPTH:
+      std::cout << "[setFrame] Setting active texture to depth..." << std::endl;
       glBindTexture(GL_TEXTURE_2D, depthTex);
       depthReady = true;
       internalFormat = GL_R32F;
@@ -136,41 +100,53 @@ void KinectOGLData::setFrame(const KinectData &data)
       break;
     }
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, frame.second.width, frame.second.height, 0, format, type, frame.second.img.data());
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glTexImage2D(
+      GL_TEXTURE_2D,
+      0, internalFormat, 
+      frame.second.width, frame.second.height, 
+      0, format, type,
+      frame.second.img.data()
+    );
   }
 }
 
 Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor) : frameProcessor(frameProcessor), currentViewType(VIEW_UNKNOWN)
 {
-  if (!glfwInit())
-  {
+  std::srand(std::time(NULL));
+  if (glfwInit() == GL_FALSE) {
     std::cerr << "Failed to initialize GLFW." << std::endl;
-    std::exit(EXIT_FAILURE);
+    terminate(EXIT_FAILURE);
   }
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef PHELSUMA_DEBUG_OGL
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+#endif // PHELSUMA_DEBUG_OGL
 
   window = glfwCreateWindow(1024, 768, "Viewer", NULL, NULL);
-  if (window == nullptr)
-  {
-    std::cerr << "Failed to initialize GLFW window." << std::endl;
-    std::exit(EXIT_FAILURE);
-  }
 
+  if (window == nullptr) {
+    std::cerr << "Failed to initialize GLFW window." << std::endl;
+    terminate(EXIT_FAILURE);
+  }
+  
+  std::cout << window << std::endl;
   glfwMakeContextCurrent(window);
 
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
-    std::cerr << "Failed to initialize OpenGL." << std::endl;
-    std::exit(EXIT_FAILURE);
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    std::cerr << "Failed to initialize OpenGL context." << std::endl;
+    terminate(EXIT_FAILURE);
   }
+#ifdef PHELSUMA_DEBUG_OGL
+  glDebugMessageCallback(glDebugOutput, nullptr);
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif // PHELSUMA_DEBUG_OGL
 
   glViewport(0, 0, 1024, 768);
 
@@ -179,7 +155,8 @@ Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor) : framePr
       -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
       -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
       1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-      1.0f, -1.0f, 0.0f, 1.0f, 0.0f};
+      1.0f, -1.0f, 0.0f, 1.0f, 0.0f
+  };
 
   GLuint sqElems[] = {0, 1, 2, 1, 2, 3};
 
@@ -205,10 +182,12 @@ void Frontend::loop()
   while (!glfwWindowShouldClose(window))
   {
     frameProcessor->processFramesStep();
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+
+    glClearColor(0.3, 0.2, 0.5, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     draw();
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -226,11 +205,14 @@ void Frontend::draw()
     break;
   case VIEW_DEPTH:
     previewGray.use();
+    std::cout << "Frontend::draw: setting previewGray program." << std::endl;
     break;
   case VIEW_PCLOUD:
     // TODO: Point cloud retrieval.
     return;
     break;
+  default:
+    return;
   }
 
   if (currentViewType == VIEW_RGB || currentViewType == VIEW_IR || currentViewType == VIEW_DEPTH)
@@ -251,11 +233,14 @@ void Frontend::draw()
 
 void Frontend::putData(PackOfFrames &framesPack)
 {
+  std::cout << "Data retrieved. Current state: " << currentViewType << " " << currentDeviceId << std::endl;
   for (auto &pack : framesPack)
   {
-    std::unordered_map<KinectId, KinectOGLData>::iterator kinectOgl = oglData.emplace(
-                                                                                 std::make_pair(pack.first, KinectOGLData(pack.first)))
-                                                                          .first;
+    std::unordered_map<KinectId, KinectOGLData>::iterator kinectOgl = oglData.find(pack.first);
+    if (kinectOgl == oglData.end()) {
+      oglData.insert({ pack.first, KinectOGLData(pack.first) });
+      kinectOgl = oglData.find(pack.first);
+    }
 
     kinectOgl->second.setFrame(pack.second);
   }
