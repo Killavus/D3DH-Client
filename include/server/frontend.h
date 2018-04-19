@@ -23,17 +23,21 @@ struct KinectOGLData
   KinectId id;
   bool rgbReady, irReady, depthReady;
   GLuint rgbTex, irTex, depthTex;
+  GLuint pcVao;
+  PointCloud pc;
 
   KinectOGLData(KinectId id);
   void reset();
   void setFrame(const KinectData &data);
+  void setPointCloud(const PointCloud& cloud);
+
   void draw(ViewType type);
 };
 
 class Frontend
 {
 public:
-  Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor);
+  Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const CameraCalibrationsMap& calibrations);
   ~Frontend();
 
   void loop();
@@ -48,12 +52,13 @@ private:
   ViewType currentViewType;
   KinectId currentDeviceId;
   std::unordered_map<KinectId, KinectOGLData> oglData;
+  const CameraCalibrationsMap& calibrations;
 
   void draw();
 
   static void initShaders();
   static bool shadersInitialized;
-  static ShaderProgram previewRGB, previewGray;
+  static ShaderProgram previewRGB, previewGray, points3D;
 };
 
 #endif //INC_3DHUMANCAPTURE_FRONTEND_H

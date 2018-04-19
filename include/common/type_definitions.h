@@ -184,6 +184,7 @@ using CameraCalibrationsMap = std::unordered_map<KinectId, CameraCalibration>;
 
 struct PointCloud
 {
+    static inline size_t cloudSize() { return 512 * 424; }
     std::vector<cv::Point3f> points;
 };
 

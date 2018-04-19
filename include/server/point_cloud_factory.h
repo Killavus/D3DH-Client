@@ -6,7 +6,7 @@
 class PointCloudFactory
 {
 public:
-  PointCloudFactory(CameraCalibrationsMap &map) : calibrations(map) {}
+  PointCloudFactory(const CameraCalibrationsMap &map) : calibrations(map) {}
 
   std::unordered_map<KinectId, PointCloud> fromPack(const PackOfFrames &framesPack) const;
 

@@ -55,9 +55,10 @@ std::unordered_map<KinectId, PointCloud> PointCloudFactory::fromPack(const PackO
       cv::getRectSubPix(depthImageMat, cv::Size(1, 1), undistorted[p], pix);
       float pixVal = pix.at<float>(0, 0);
       points3d.push_back(cv::Point3f(
-          ((undistorted[p].x - cx_d) * pixVal) / fx_d,
-          ((undistorted[p].y - cy_d) * pixVal) / fy_d,
-          pixVal));
+          undistorted[p].x * pixVal,
+          undistorted[p].y * pixVal,
+          pixVal
+      ));
     }
 
     PointCloud cloud;

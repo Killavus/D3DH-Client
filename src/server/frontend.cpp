@@ -5,6 +5,7 @@
 
 #include "server/frontend.h"
 #include "server/frame_processors.h"
+#include "server/point_cloud_factory.h"
 
 #include <Phelsuma/include/ShaderProgramLinker.h>
 #include <Phelsuma/include/ShaderCompiler.h>
@@ -20,8 +21,26 @@ KinectOGLData::KinectOGLData(KinectId id) : id(id)
   glGenTextures(1, &rgbTex);
   glGenTextures(1, &irTex);
   glGenTextures(1, &depthTex);
+  glGenVertexArrays(1, &pcVao);
+
+  GLuint pcVbo;
+  glGenBuffers(1, &pcVbo);
+  glBindVertexArray(pcVao);
+  glBindBuffer(GL_ARRAY_BUFFER, pcVbo);
+
+  std::vector<float> pcloud(PointCloud::cloudSize() * 3, 0.0f);
+
+  glBufferData(GL_ARRAY_BUFFER, PointCloud::cloudSize() * 3 * sizeof(float), pcloud.data(), GL_STATIC_DRAW);
+	
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+  glEnableVertexAttribArray(0);
 
   reset();
+}
+
+void KinectOGLData::setPointCloud(const PointCloud& cloud) {
+  glBindVertexArray(pcVao);
+  glBufferData(GL_ARRAY_BUFFER, clouds.points.size() * sizeof(float), cloud.points.data(), GL_STATIC_DRAW);
 }
 
 void KinectOGLData::reset()
@@ -114,7 +133,7 @@ void KinectOGLData::setFrame(const KinectData &data)
   }
 }
 
-Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor) : frameProcessor(frameProcessor), currentViewType(VIEW_UNKNOWN)
+Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const CameraCalibrationsMap& calibrations) : frameProcessor(frameProcessor), currentViewType(VIEW_UNKNOWN), calibrations(calibrations)
 {
   std::srand(std::time(NULL));
   if (glfwInit() == GL_FALSE) {
@@ -233,7 +252,10 @@ void Frontend::draw()
 
 void Frontend::putData(PackOfFrames &framesPack)
 {
-  std::cout << "Data retrieved. Current state: " << currentViewType << " " << currentDeviceId << std::endl;
+
+  PointCloudFactory pcFactory(calibrations);
+  auto cloudSet = pcFactory.fromPack(framesPack);
+
   for (auto &pack : framesPack)
   {
     std::unordered_map<KinectId, KinectOGLData>::iterator kinectOgl = oglData.find(pack.first);
@@ -243,6 +265,10 @@ void Frontend::putData(PackOfFrames &framesPack)
     }
 
     kinectOgl->second.setFrame(pack.second);
+
+    if (cloudSet.find(pack.first) !== cloudSet.end()) {
+      kinectOgl->second.setPointCloud(cloudSet[pack.first]);
+    }
   }
 
   /* When we get the first data, we want to display _something on the screen_. */

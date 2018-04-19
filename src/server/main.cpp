@@ -62,7 +62,6 @@ int main(int argc, char **argv)
                                           config.minNumberOfFramesInPackageToAccept,
                                           getTime());
 
-    PointCloudFactory pointCloudFactory(cameraCalibrations);
 
     Server srv(config.serverEndpoint.second,
                config.clientsEndpoints, frameSynchronizer);
@@ -78,7 +77,7 @@ int main(int argc, char **argv)
 
     if (config.withFrontend)
     {
-        Frontend frontend(frameProcessor);
+        Frontend frontend(frameProcessor, cameraCalibrations);
 
         auto guiUpdateProcessor =
             std::make_shared<PackOfFramesFrontendProcessor>(frontend);

@@ -6,8 +6,7 @@ uniform sampler2D data;
 in vec2 texCoord;
 
 void main() {
-  ivec2 uv = ivec2(texCoord.x, texCoord.y);
-  vec4 grayColor = texelFetch(data, uv, 0);
+  vec4 grayColor = texture(data, texCoord);
 
   fragColor = vec4(grayColor.r, grayColor.r, grayColor.r, 4500.0) / 4500.0;
 }

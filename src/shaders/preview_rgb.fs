@@ -6,7 +6,6 @@ uniform sampler2D data;
 in vec2 texCoord;
 
 void main() {
-  ivec2 uv = ivec2(texCoord.x, texCoord.y);
-  fragColor = texelFetch(data, uv, 0);
+  fragColor = texture(data, texCoord);
 }
 
