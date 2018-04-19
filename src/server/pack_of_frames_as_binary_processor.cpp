@@ -6,7 +6,6 @@
 #include "server/pack_of_frames_as_binary_processor.h"
 #include "utils.h"
 
-
 using namespace cv;
 
 PackOfFramesAsBinaryProcessor::PackOfFramesAsBinaryProcessor(
@@ -19,7 +18,7 @@ PackOfFramesAsBinaryProcessor::PackOfFramesAsBinaryProcessor(
 
 void PackOfFramesAsBinaryProcessor::onNewFrame(PackOfFrames &framePacks, int frameNo)
 {
-    auto foo = [this, &framePacks, &frameNo](){
+    auto foo = [this, &framePacks, &frameNo]() {
     auto frameNoStr = std::to_string(frameNo);
 
     for (auto &frameEntry : framePacks)
@@ -27,6 +26,6 @@ void PackOfFramesAsBinaryProcessor::onNewFrame(PackOfFrames &framePacks, int fra
         frameEntry.second.saveAsBinary(directory + "/binary/" + 
                 frameEntry.first + "_batch_"+ 
                 frameNoStr);
-    }};
+    } };
     std::async(std::launch::async, foo);
 }

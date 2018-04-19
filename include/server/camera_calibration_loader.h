@@ -5,12 +5,14 @@
 #include <yaml-cpp/yaml.h>
 #include <opencv2/core.hpp>
 
-#include "server/camera_calibration.h"
+#include "type_definitions.h"
 
-class CameraCalibrationLoader {
+class CameraCalibrationLoader
+{
 public:
-  CameraCalibrationLoader(const std::string& calibrationDataDir);
+  CameraCalibrationLoader(const std::string &calibrationDataDir);
   CameraCalibration load() const;
+
 private:
   const std::string path;
 };

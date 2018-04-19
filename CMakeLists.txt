@@ -97,6 +97,7 @@ ADD_EXECUTABLE(Server
     src/server/pack_of_frames_frontend_processor.cpp
     src/server/main.cpp
     src/server/camera_calibration_loader.cpp
+    src/server/point_cloud_factory.cpp
     ${GLAD_SRC})
 TARGET_LINK_LIBRARIES(Server
     ${RPCLIB_LIBS}

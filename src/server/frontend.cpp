@@ -20,7 +20,7 @@ static Shader shaderFromFile(const std::string &path, GLenum type)
   Shader shader = compiler.compile();
 
   GLint success;
-  
+
   if (shader.invalid())
   {
     std::cerr << path << " -- "
@@ -74,19 +74,29 @@ void KinectOGLData::reset()
 void KinectOGLData::draw(ViewType type)
 {
   glActiveTexture(GL_TEXTURE0);
-  switch(type) {
-    case VIEW_DEPTH:
-      if(!depthReady) { return; }
-      glBindTexture(GL_TEXTURE_2D, depthTex);
-      break;
-    case VIEW_RGB:
-      if(!rgbReady) { return; }
-      glBindTexture(GL_TEXTURE_2D, rgbTex);
-      break;
-    case VIEW_IR:
-      if(!irReady) { return; }
-      glBindTexture(GL_TEXTURE_2D, irTex);
-      break;
+  switch (type)
+  {
+  case VIEW_DEPTH:
+    if (!depthReady)
+    {
+      return;
+    }
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+    break;
+  case VIEW_RGB:
+    if (!rgbReady)
+    {
+      return;
+    }
+    glBindTexture(GL_TEXTURE_2D, rgbTex);
+    break;
+  case VIEW_IR:
+    if (!irReady)
+    {
+      return;
+    }
+    glBindTexture(GL_TEXTURE_2D, irTex);
+    break;
   }
 
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -223,13 +233,17 @@ void Frontend::draw()
     break;
   }
 
-  if (currentViewType == VIEW_RGB || currentViewType == VIEW_IR || currentViewType == VIEW_DEPTH) {
-    if (currentDeviceId != "") {
+  if (currentViewType == VIEW_RGB || currentViewType == VIEW_IR || currentViewType == VIEW_DEPTH)
+  {
+    if (currentDeviceId != "")
+    {
       glBindVertexArray(screenVao);
       auto it = oglData.find(currentDeviceId);
       it->second.draw(currentViewType);
     }
-  } else if(currentViewType == VIEW_PCLOUD) {
+  }
+  else if (currentViewType == VIEW_PCLOUD)
+  {
     // TODO: Point cloud retrieval.
     return;
   }
@@ -246,6 +260,7 @@ void Frontend::putData(PackOfFrames &framesPack)
     kinectOgl->second.setFrame(pack.second);
   }
 
+  /* When we get the first data, we want to display _something on the screen_. */
   if (currentViewType == VIEW_UNKNOWN)
   {
     currentViewType = VIEW_DEPTH;

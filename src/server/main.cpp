@@ -2,8 +2,6 @@
 #include <cstdlib>
 #include <unistd.h>
 
-#include <unordered_map>
-
 #include "data_capture.h"
 #include "utils.h"
 #include "type_definitions.h"
@@ -14,63 +12,61 @@
 #include "server/pack_of_frames_frontend_processor.h"
 
 #include "server/camera_calibration_loader.h"
-#include "server/camera_calibration.h"
+#include "server/point_cloud_factory.h"
+
+void loadCalibrationData(const Config &config, CameraCalibrationsMap &calibrations)
+{
+    std::cout << "Loading calibration data..." << std::endl;
+    for (auto it = config.clientCalibrationPaths.begin(); it != config.clientCalibrationPaths.end(); ++it)
+    {
+
+        CameraCalibrationLoader loader(it->second);
+        calibrations[it->first] = loader.load();
+
+#ifdef DEBUG_CALIB_LOADING
+        std::cout << "Loaded calibration for " << it->first << "." << std::endl;
+        std::cout << "Color intrinsic: " << std::endl
+                  << cameraCalibrations[it->first].colorIntrinsic
+                  << std::endl;
+
+        std::cout << "IR intrinsic: " << std::endl
+                  << cameraCalibrations[it->first].irIntrinsic
+                  << std::endl;
+
+        std::cout << "Camera rotation extrinsic: " << std::endl
+                  << cameraCalibrations[it->first].camerasExtrinsic.rotation << std::endl;
+
+        std::cout << "Camera translation extrinsic: " << std::endl
+                  << cameraCalibrations[it->first].camerasExtrinsic.translation << std::endl;
+
+        std::cout << "World rotation extrinsic: " << std::endl
+                  << cameraCalibrations[it->first].worldExtrinsic.rotation << std::endl;
+
+        std::cout << "World translation extrinsic: " << std::endl
+                  << cameraCalibrations[it->first].worldExtrinsic.translation << std::endl;
+#endif
+    }
+    std::cout << "Loaded " << config.clientCalibrationPaths.size() << " stored camera calibrations." << std::endl;
+}
 
 int main(int argc, char **argv)
 {
     ArgsParser parser(argc, argv);
     Config config(parser.getOption("config_path"));
-    std::unordered_map<KinectId, CameraCalibration> cameraCalibrations;
+    CameraCalibrationsMap cameraCalibrations;
 
-    std::cout << "Loading calibration data..." << std::endl;
-    for(auto it = config.clientCalibrationPaths.begin(); it != config.clientCalibrationPaths.end(); ++it) {
-        CameraCalibrationLoader loader(it->second);
-        cameraCalibrations[it->first] = loader.load();
-        std::cout << "Loaded calibration for " << it->first << std::endl;
-
-        std::cout <<
-          "Color intrinsic: " <<
-          std::endl <<
-          cameraCalibrations[it->first].colorIntrinsic
-          << std::endl;
-
-        std::cout <<
-          "IR intrinsic: " <<
-          std::endl <<
-          cameraCalibrations[it->first].irIntrinsic
-          << std::endl;
-
-        std::cout <<
-          "Camera rotation extrinsic: " <<
-          std::endl <<
-          cameraCalibrations[it->first].camerasExtrinsic.rotation <<
-          std::endl;
-
-        std::cout <<
-          "Camera translation extrinsic: " <<
-          std::endl <<
-          cameraCalibrations[it->first].camerasExtrinsic.translation <<
-          std::endl;
-
-        std::cout <<
-          "World rotation extrinsic: " <<
-          std::endl <<
-          cameraCalibrations[it->first].worldExtrinsic.rotation <<
-          std::endl;
-
-        std::cout <<
-          "World translation extrinsic: " <<
-          std::endl <<
-          cameraCalibrations[it->first].worldExtrinsic.translation <<
-          std::endl;
-    }
+    loadCalibrationData(config, cameraCalibrations);
 
     PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
                                           config.clientsEndpoints.size(),
                                           config.minNumberOfFramesInPackageToAccept,
                                           getTime());
+
+    PointCloudFactory pointCloudFactory(cameraCalibrations);
+
     Server srv(config.serverEndpoint.second,
                config.clientsEndpoints, frameSynchronizer);
+
     srv.performSynchronization();
 
     auto frameProcessor =

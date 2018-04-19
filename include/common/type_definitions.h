@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <boost/optional.hpp>
+#include <opencv2/core.hpp>
 
 // <ip, port>
 using Endpoint = std::pair<std::string, uint16_t>;
@@ -34,14 +35,14 @@ struct Image
 {
     Image();
     Image(RawImage img, int w, int h);
-    
-    template<class Archive>
-    void serialize(Archive &ar, 
-        __attribute__((unused)) const unsigned int version)
+
+    template <class Archive>
+    void serialize(Archive &ar,
+                   __attribute__((unused)) const unsigned int version)
     {
-        ar & img;
-        ar & width;
-        ar & height;
+        ar &img;
+        ar &width;
+        ar &height;
     }
 
     RawImage img;
@@ -66,18 +67,18 @@ struct KinectData
 
     KinectData(RawImage depth, size_t depthW, size_t depthH,
                timeType time);
-    
+
     void saveAsBinary(std::string fileName);
     static KinectData load(std::string fileName);
 
-    template<class Archive>
+    template <class Archive>
     void serialize(Archive &ar,
-        __attribute__((unused)) const unsigned int version)
+                   __attribute__((unused)) const unsigned int version)
     {
-        ar & images;
-        ar & timestamp;
+        ar &images;
+        ar &timestamp;
     }
-    
+
     std::unordered_map<ImageType, Image, EnumClassHash> images;
     timeType timestamp;
 };
@@ -131,6 +132,59 @@ class PackOfFramesHandler
     std::size_t numberOfKinects;
     std::size_t minNumberOfFramesInPackageToAccept;
     timeType windowStartPos;
+};
+
+struct CamerasExtrinsic
+{
+    /*
+    Color camera is unrotated & positioned at (0, 0) camera space.
+    Extrinsics below are about IR camera.
+  */
+
+    cv::Mat rotation;
+    cv::Mat translation;
+
+    cv::Mat fundamental;
+    cv::Mat essential;
+};
+
+struct WorldExtrinsic
+{
+    cv::Mat rotation;
+    cv::Mat translation;
+};
+
+struct CameraCalibration
+{
+    cv::Mat colorIntrinsic;
+    cv::Mat irIntrinsic;
+    cv::Mat irDistortion;
+    cv::Mat colorDistortion;
+
+    CamerasExtrinsic camerasExtrinsic;
+    WorldExtrinsic worldExtrinsicColor;
+    WorldExtrinsic worldExtrinsicIr;
+
+    bool _irExtrinsicCalculated;
+
+    CameraCalibration() : _irExtrinsicCalculated(false) {}
+
+    void calculateIrExtrinsic()
+    {
+        if (!_irExtrinsicCalculated)
+        {
+            worldExtrinsicIr.rotation = camerasExtrinsic.rotation * worldExtrinsicColor.translation + camerasExtrinsic.translation;
+            worldExtrinsicIr.translation = worldExtrinsicIr.rotation.t() * worldExtrinsicIr.translation + worldExtrinsicIr.rotation.t() * camerasExtrinsic.rotation.t() * camerasExtrinsic.translation;
+            _irExtrinsicCalculated = true;
+        }
+    }
+};
+
+using CameraCalibrationsMap = std::unordered_map<KinectId, CameraCalibration>;
+
+struct PointCloud
+{
+    std::vector<cv::Point3f> points;
 };
 
 #endif //INC_3DHUMANCAPTURE_SERVER_TYPE_DEFINITIONS_H
