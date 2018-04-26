@@ -30,7 +30,6 @@ struct KinectOGLData
   void reset();
   void setFrame(const KinectData &data);
   void setPointCloud(const PointCloud& cloud);
-
   void draw(ViewType type);
 };
 
@@ -42,15 +41,22 @@ public:
 
   void loop();
   void putData(PackOfFrames &framesPack);
+  void cycleCamera();
+  void cycleChannels();
 
 private:
+  inline KinectId currentDeviceId() const {
+    return
+      currentDeviceIdIt != oglData.end() ? currentDeviceIdIt->first : "";
+  }
+
   GLuint screenVao;
 
   GLFWwindow *window;
   std::shared_ptr<FrameProcessorBase> frameProcessor;
 
   ViewType currentViewType;
-  KinectId currentDeviceId;
+  std::unordered_map<KinectId, KinectOGLData>::iterator currentDeviceIdIt;
   std::unordered_map<KinectId, KinectOGLData> oglData;
   const CameraCalibrationsMap& calibrations;
 

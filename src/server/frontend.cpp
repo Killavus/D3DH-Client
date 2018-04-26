@@ -53,6 +53,7 @@ void KinectOGLData::reset()
 void KinectOGLData::draw(ViewType type)
 {
   glActiveTexture(GL_TEXTURE0);
+
   switch (type)
   {
   case VIEW_DEPTH:
@@ -76,10 +77,23 @@ void KinectOGLData::draw(ViewType type)
     }
     glBindTexture(GL_TEXTURE_2D, irTex);
     break;
+  default:
+    return;
   }
 
-  std::cout << "glDrawElements" << std::endl;
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+static void processKeyInput(GLFWwindow *window, int key, int, int action, int) {
+  Frontend *frontend = static_cast<Frontend*>(glfwGetWindowUserPointer(window));
+
+  if (key == GLFW_KEY_C && action == GLFW_PRESS) {
+    frontend->cycleCamera();
+  }
+
+  if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+    frontend->cycleChannels();
+  }
 }
 
 void KinectOGLData::setFrame(const KinectData &data)
@@ -108,7 +122,6 @@ void KinectOGLData::setFrame(const KinectData &data)
       type = GL_FLOAT;
       break;
     case ImageType::DEPTH:
-      std::cout << "[setFrame] Setting active texture to depth..." << std::endl;
       glBindTexture(GL_TEXTURE_2D, depthTex);
       depthReady = true;
       internalFormat = GL_R32F;
@@ -131,8 +144,13 @@ void KinectOGLData::setFrame(const KinectData &data)
   }
 }
 
-Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const CameraCalibrationsMap& calibrations) : frameProcessor(frameProcessor), currentViewType(VIEW_UNKNOWN), calibrations(calibrations)
+Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const CameraCalibrationsMap& calibrations) :
+  frameProcessor(frameProcessor),
+  currentViewType(VIEW_UNKNOWN),
+  calibrations(calibrations)
 {
+  currentDeviceIdIt = oglData.end();
+
   std::srand(std::time(NULL));
   if (glfwInit() == GL_FALSE) {
     std::cerr << "Failed to initialize GLFW." << std::endl;
@@ -147,6 +165,9 @@ Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const Cam
 #endif // PHELSUMA_DEBUG_OGL
 
   window = glfwCreateWindow(1024, 768, "Viewer", NULL, NULL);
+  glfwSetWindowUserPointer(window, this);
+
+  glfwSetKeyCallback(window, processKeyInput);
 
   if (window == nullptr) {
     std::cerr << "Failed to initialize GLFW window." << std::endl;
@@ -240,7 +261,6 @@ void Frontend::draw()
     break;
   case VIEW_DEPTH:
     previewGray.use();
-    std::cout << "Frontend::draw: setting previewGray program." << std::endl;
     break;
   case VIEW_PCLOUD:
     // TODO: Point cloud retrieval.
@@ -252,10 +272,10 @@ void Frontend::draw()
 
   if (currentViewType == VIEW_RGB || currentViewType == VIEW_IR || currentViewType == VIEW_DEPTH)
   {
-    if (currentDeviceId != "")
+    if (currentDeviceId() != "")
     {
       glBindVertexArray(screenVao);
-      auto it = oglData.find(currentDeviceId);
+      auto it = oglData.find(currentDeviceId());
       it->second.draw(currentViewType);
     }
   }
@@ -291,7 +311,7 @@ void Frontend::putData(PackOfFrames &framesPack)
   if (currentViewType == VIEW_UNKNOWN)
   {
     currentViewType = VIEW_DEPTH;
-    currentDeviceId = oglData.begin()->first;
+    currentDeviceIdIt = oglData.begin();
   }
 }
 
@@ -310,6 +330,38 @@ void Frontend::initShaders()
     Frontend::previewGray = makeProgram(previewGrayShaders.begin(), previewGrayShaders.end());
     Frontend::shadersInitialized = true;
   }
+}
+
+void Frontend::cycleCamera() {
+  ++currentDeviceIdIt;
+  if (currentDeviceIdIt == oglData.end()) {
+    currentDeviceIdIt = oglData.begin();
+  }
+}
+
+void Frontend::cycleChannels() {
+  // RGB -> DEPTH -> IR -> PCLOUD
+  ViewType newViewType = VIEW_UNKNOWN;
+
+  switch(currentViewType) {
+    case VIEW_RGB:
+      newViewType = VIEW_DEPTH;
+      break;
+    case VIEW_DEPTH:
+      newViewType = VIEW_IR;
+      break;
+    case VIEW_IR:
+      newViewType = VIEW_PCLOUD;
+      break;
+    case VIEW_PCLOUD:
+      newViewType = VIEW_RGB;
+      break;
+    default:
+      newViewType = currentViewType;
+      break;
+  }
+
+  currentViewType = newViewType;
 }
 
 Frontend::~Frontend()

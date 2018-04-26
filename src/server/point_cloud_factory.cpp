@@ -38,11 +38,6 @@ std::unordered_map<KinectId, PointCloud> PointCloudFactory::fromPack(const PackO
 
     cv::undistortPoints(distorted, undistorted, calibration.irIntrinsic, calibration.irDistortion);
 
-    float cx_d = calibration.irIntrinsic.at<float>(0, 2),
-          cy_d = calibration.irIntrinsic.at<float>(1, 2),
-          fx_d = calibration.irIntrinsic.at<float>(0, 0),
-          fy_d = calibration.irIntrinsic.at<float>(1, 1);
-
     cv::Mat depthImageMat;
     cv::Mat(depthImage.width, depthImage.height, CV_32FC1, depthImage.img.data()).copyTo(depthImageMat);
 
