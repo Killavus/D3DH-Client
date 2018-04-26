@@ -124,10 +124,10 @@ struct CompareSecond
 void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData data)
 {
     std::lock_guard<std::mutex> guard(timeLinesMutex);
-    
+
     lastTimestamps[kinectId] = data.timestamp;
     timeLines[kinectId].insert(std::make_pair(data.timestamp, std::move(data)));
-    
+
     timeType minOldestTimestamp = (*std::min_element(lastTimestamps.begin(), lastTimestamps.end(), CompareSecond())).second;
 
     while (windowStartPos < minOldestTimestamp)
@@ -152,7 +152,7 @@ void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData data)
             PackOfFrames packOfFrames;
             timeType minTimestamp = std::numeric_limits<timeType>::max();
             KinectId minKinectId{};
-            
+
             for (auto it = currentPack.begin(); it != currentPack.end(); ++it) {
                 KinectId kinectId = (*it).first;
                 timeType timestamp = (*it).second;
@@ -171,7 +171,7 @@ void PackOfFramesHandler::putFrame(const std::string &kinectId, KinectData data)
              ++windowStartPos;
         }
     }
-    
+
     ++windowStartPos;
     /*
     if (currentIt->second.size() == numberOfKinects)

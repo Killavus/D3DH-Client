@@ -12,11 +12,11 @@
 class Server
 {
 public:
-    Server(uint16_t port, 
+    Server(uint16_t port,
            std::unordered_map<KinectId, Endpoint> clientsEndpoints,
            PackOfFramesHandler &frameSynchronizer);
     void performSynchronization();
-    
+
 private:
     // to be exposed via rpc
     void pushKinectData(KinectId kinId, KinectData data);

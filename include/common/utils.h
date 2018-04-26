@@ -35,6 +35,8 @@ struct Config
     bool withFrontend;
     Mode mode;
     int maxNumFramesToBeSent;
+    bool isPlayer;
+    std::string playerPath;
 };
 
 class ArgsParser

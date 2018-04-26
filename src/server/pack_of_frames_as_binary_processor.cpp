@@ -23,8 +23,8 @@ void PackOfFramesAsBinaryProcessor::onNewFrame(PackOfFrames &framePacks, int fra
 
     for (auto &frameEntry : framePacks)
     {
-        frameEntry.second.saveAsBinary(directory + "/binary/" + 
-                frameEntry.first + "_batch_"+ 
+        frameEntry.second.saveAsBinary(directory + "/binary/" +
+                frameEntry.first + "_batch_"+
                 frameNoStr);
     } };
     std::async(std::launch::async, foo);

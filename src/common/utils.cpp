@@ -79,6 +79,8 @@ Config::Config(std::string path)
     outputDirectory = config["OutputDirectory"].as<std::string>();
     mode = static_cast<Mode>(config["Mode"].as<int>());
     maxNumFramesToBeSent = config["MaxNumFramesToBeSent"].as<int>();
+    isPlayer = config["Server"]["IsPlayer"].as<bool>();
+    playerPath = config["Server"]["PlayerDirectory"].as<std::string>();
 
     printReadedData();
 }

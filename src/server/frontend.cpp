@@ -31,7 +31,7 @@ KinectOGLData::KinectOGLData(KinectId id) : id(id)
   std::vector<float> pcloud(PointCloud::cloudSize() * 3, 0.0f);
 
   glBufferData(GL_ARRAY_BUFFER, PointCloud::cloudSize() * 3 * sizeof(float), pcloud.data(), GL_STATIC_DRAW);
-	
+
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
   glEnableVertexAttribArray(0);
 
@@ -40,7 +40,7 @@ KinectOGLData::KinectOGLData(KinectId id) : id(id)
 
 void KinectOGLData::setPointCloud(const PointCloud& cloud) {
   glBindVertexArray(pcVao);
-  glBufferData(GL_ARRAY_BUFFER, clouds.points.size() * sizeof(float), cloud.points.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, cloud.points.size() * sizeof(float), cloud.points.data(), GL_STATIC_DRAW);
 }
 
 void KinectOGLData::reset()
@@ -78,8 +78,6 @@ void KinectOGLData::draw(ViewType type)
     break;
   }
 
-  std::cout << depthTex << " " << rgbTex << " " << irTex << std::endl;
- 
   std::cout << "glDrawElements" << std::endl;
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -125,8 +123,8 @@ void KinectOGLData::setFrame(const KinectData &data)
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glTexImage2D(
       GL_TEXTURE_2D,
-      0, internalFormat, 
-      frame.second.width, frame.second.height, 
+      0, internalFormat,
+      frame.second.width, frame.second.height,
       0, format, type,
       frame.second.img.data()
     );
@@ -154,8 +152,7 @@ Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const Cam
     std::cerr << "Failed to initialize GLFW window." << std::endl;
     terminate(EXIT_FAILURE);
   }
-  
-  std::cout << window << std::endl;
+
   glfwMakeContextCurrent(window);
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -196,10 +193,20 @@ Frontend::Frontend(std::shared_ptr<FrameProcessorBase> frameProcessor, const Cam
   Frontend::initShaders();
 }
 
+#define FPS 30.0
 void Frontend::loop()
 {
+  size_t frameNo = 0;
+  double lastTime = glfwGetTime(),
+         currentTime = glfwGetTime();
+
   while (!glfwWindowShouldClose(window))
   {
+    currentTime = glfwGetTime();
+    if (currentTime - lastTime <= 1.0 / FPS) {
+      continue;
+    }
+
     frameProcessor->processFramesStep();
 
     glClearColor(0.3, 0.2, 0.5, 1.0);
@@ -209,6 +216,15 @@ void Frontend::loop()
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+
+    lastTime = glfwGetTime();
+
+    ++frameNo;
+    frameNo %= 100;
+
+    if (frameNo == 0) {
+      std::cout << "Possible FPS: " << 1.0 / (currentTime - lastTime) << std::endl;
+    }
   }
 }
 
@@ -266,7 +282,7 @@ void Frontend::putData(PackOfFrames &framesPack)
 
     kinectOgl->second.setFrame(pack.second);
 
-    if (cloudSet.find(pack.first) !== cloudSet.end()) {
+    if (cloudSet.find(pack.first) != cloudSet.end()) {
       kinectOgl->second.setPointCloud(cloudSet[pack.first]);
     }
   }

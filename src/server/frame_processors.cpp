@@ -6,19 +6,16 @@
 
 #include "utils.h"
 
-FrameProcessorBase::FrameProcessorBase(PackOfFramesHandler &frameHandler)
+FrameProcessorBase::FrameProcessorBase(GenericPackOfFramesHandler &frameHandler)
 	: frameHandler(frameHandler)
 {}
 
-ChainFrameProcessor::ChainFrameProcessor(PackOfFramesHandler &frameHandler) : FrameProcessorBase(frameHandler), frameCounter(0) {}
+ChainFrameProcessor::ChainFrameProcessor(GenericPackOfFramesHandler &frameHandler) : FrameProcessorBase(frameHandler), frameCounter(0) {}
 
 void ChainFrameProcessor::processFramesStep() {
   auto nextFrameMaybe = frameHandler.getNextPackOfFrames();
 
-  if (!nextFrameMaybe) {
-    // IF_DEBUG(std::cerr << "[ChainFrameProcessor] Skipping frame..." << std::endl);
-    sleep(1);
-  } else {
+  if (nextFrameMaybe) {
     IF_DEBUG(std::cerr << "[ChainFrameProcessor] Processing next frame batch" << std::endl);
     ++frameCounter;
     for(auto &it : processors) {

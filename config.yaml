@@ -2,19 +2,21 @@ Clients:
     - Hostname: Kin3D-1
       Ip:       127.0.0.1
       Port:     8101
-      
+
 #    - Hostname: kin3d-2
 #      Ip:       192.168.4.175
 #      Port:     8881
-      
+
 #    - Hostname: kin3d-3
 #      Ip:       192.168.4.174
 #      Port:     8881
-      
+
 Server:
-    Ip:           127.0.0.1 
+    Ip:           127.0.0.1
     Port:         8881
     WithFrontend: true
+    IsPlayer: true
+    PlayerDirectory: output_ceta_001/binary
     CameraCalibrations:
         - Hostname: Kin3D-1
           Path: /home/killavus/calib_kin1_1704

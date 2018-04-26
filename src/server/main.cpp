@@ -14,8 +14,10 @@
 #include "server/camera_calibration_loader.h"
 #include "server/point_cloud_factory.h"
 
+#include "server/binary_data_player.h"
+
 void loadCalibrationData(const Config &config, CameraCalibrationsMap &calibrations)
-{
+{return;
     std::cout << "Loading calibration data..." << std::endl;
     for (auto it = config.clientCalibrationPaths.begin(); it != config.clientCalibrationPaths.end(); ++it)
     {
@@ -57,40 +59,52 @@ int main(int argc, char **argv)
 
     loadCalibrationData(config, cameraCalibrations);
 
-    PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
-                                          config.clientsEndpoints.size(),
-                                          config.minNumberOfFramesInPackageToAccept,
-                                          getTime());
+    if (config.isPlayer) {
+        BinaryDataPlayer player(config.playerPath);
 
-
-    Server srv(config.serverEndpoint.second,
-               config.clientsEndpoints, frameSynchronizer);
-
-    srv.performSynchronization();
-
-    auto frameProcessor =
-        std::make_shared<ChainFrameProcessor>(frameSynchronizer);
-    auto toDiskProcessor =
-        std::make_shared<PackOfFramesToDiskProcessor>(config.outputDirectory);
-    auto asBinaryProcessor =
-        std::make_shared<PackOfFramesAsBinaryProcessor>(config.outputDirectory);
-
-    if (config.withFrontend)
-    {
+        auto frameProcessor =
+          std::make_shared<ChainFrameProcessor>(player);
         Frontend frontend(frameProcessor, cameraCalibrations);
-
         auto guiUpdateProcessor =
-            std::make_shared<PackOfFramesFrontendProcessor>(frontend);
+          std::make_shared<PackOfFramesFrontendProcessor>(frontend);
         frameProcessor->addProcessor(guiUpdateProcessor);
-//        frameProcessor->addProcessor(toDiskProcessor);
 
         frontend.loop();
-    }
-    else
-    {
-        frameProcessor->addProcessor(toDiskProcessor);
-        frameProcessor->addProcessor(asBinaryProcessor);
-        frameProcessor->processFrames();
+    } else {
+        PackOfFramesHandler frameSynchronizer(config.maxDistBetweenFramesInBatch,
+                                            config.clientsEndpoints.size(),
+                                            config.minNumberOfFramesInPackageToAccept,
+                                            getTime());
+
+        Server srv(config.serverEndpoint.second,
+                config.clientsEndpoints, frameSynchronizer);
+
+        srv.performSynchronization();
+
+        auto frameProcessor =
+            std::make_shared<ChainFrameProcessor>(frameSynchronizer);
+        auto toDiskProcessor =
+            std::make_shared<PackOfFramesToDiskProcessor>(config.outputDirectory);
+        auto asBinaryProcessor =
+            std::make_shared<PackOfFramesAsBinaryProcessor>(config.outputDirectory);
+
+        if (config.withFrontend)
+        {
+            Frontend frontend(frameProcessor, cameraCalibrations);
+
+            auto guiUpdateProcessor =
+                std::make_shared<PackOfFramesFrontendProcessor>(frontend);
+            frameProcessor->addProcessor(guiUpdateProcessor);
+            frameProcessor->addProcessor(toDiskProcessor);
+
+            frontend.loop();
+        }
+        else
+        {
+            frameProcessor->addProcessor(toDiskProcessor);
+            frameProcessor->addProcessor(asBinaryProcessor);
+            frameProcessor->processFrames();
+        }
     }
 
     return 0;

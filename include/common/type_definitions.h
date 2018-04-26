@@ -108,7 +108,13 @@ using PackOfFrames = std::unordered_map<KinectId, KinectData>;
 using PackOfTimeStamps = std::unordered_map<KinectId, timeType>;
 using TimeLine = std::map<timeType, KinectData>;
 
-class PackOfFramesHandler
+class GenericPackOfFramesHandler {
+public:
+  virtual ~GenericPackOfFramesHandler() = default;
+  virtual boost::optional<PackOfFrames> getNextPackOfFrames() = 0;
+};
+
+class PackOfFramesHandler : public GenericPackOfFramesHandler
 {
   public:
     PackOfFramesHandler(std::uint64_t maxDistBetweenFramesInBatch,
@@ -117,7 +123,7 @@ class PackOfFramesHandler
                         timeType windowStartPos);
 
     void putFrame(const KinectId &kinectId, KinectData data);
-    boost::optional<PackOfFrames> getNextPackOfFrames();
+    boost::optional<PackOfFrames> getNextPackOfFrames() override;
 
   private:
     std::uint64_t getFrameId(std::uint64_t frameID);

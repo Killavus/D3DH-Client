@@ -1,0 +1,29 @@
+Clients:
+    - Hostname: Kin3D-1
+      Ip:       192.168.4.176
+      Port:     8882
+      
+    - Hostname: kin3d-2
+      Ip:       192.168.4.175
+      Port:     8882
+      
+    - Hostname: kin3d-3
+      Ip:       192.168.4.174
+      Port:     8882
+      
+Server:
+    Ip:           192.168.4.177 
+    Port:         8882
+    WithFrontend: false 
+    CameraCalibrations:
+        - Hostname: kin3d-3
+          Path: /home/kin3d-3/Documents/D3DH-Client/build/calib_kin3_1704
+
+MaxDistBetweenFramesInBatch: 45
+MinNumberOfFramesInPackageToAccept: 3
+OutputDirectory: output_ceta_movement_depth
+
+#Mode: SEND_ALL -> 0
+#      SEND_DEPTH -> 1
+Mode: 1
+MaxNumFramesToBeSent: 800

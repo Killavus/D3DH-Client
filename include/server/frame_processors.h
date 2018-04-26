@@ -10,18 +10,18 @@ class PackOfFramesProcessor;
 class FrameProcessorBase
 {
 public:
-    FrameProcessorBase(PackOfFramesHandler &frameHandler);
+    FrameProcessorBase(GenericPackOfFramesHandler &frameHandler);
     virtual void processFramesStep() = 0;
     virtual void processFrames() = 0;
     virtual ~FrameProcessorBase() = default;
 
 protected:
-    PackOfFramesHandler &frameHandler;
+    GenericPackOfFramesHandler &frameHandler;
 };
 
 class ChainFrameProcessor : public FrameProcessorBase {
 public:
-  ChainFrameProcessor(PackOfFramesHandler &frameHandler);
+  ChainFrameProcessor(GenericPackOfFramesHandler &frameHandler);
   virtual ~ChainFrameProcessor() = default;
 
   void processFramesStep() override;
